@@ -1,5 +1,12 @@
 import cashflow
 import getch
+import os
+
+folder_path = "saves/"
+
+if not os.path.exists(folder_path):
+    os.makedirs(folder_path)
+
 def main():
     while True:
         print("Expense Tracker Main Menu")

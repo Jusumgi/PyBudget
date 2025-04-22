@@ -16,7 +16,7 @@ def main():
     choice = getch.getch()
     if choice == "s":
         filename = input("Enter a name for the new file: ")
-        loaded_cashflow = {"filename": filename, "cashflows":[], "people": []}
+        loaded_cashflow = {"filename": filename, "cashflows":[], "people": []} 
     elif choice == "l":
         files = getfiles.get_file_names("saves/")
         print(files)

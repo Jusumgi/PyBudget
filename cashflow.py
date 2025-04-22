@@ -8,7 +8,12 @@ import copy
 import ast
 import getfiles
 
-
+def find_pay_period(day):
+    if 1 <= day <= 15 :
+        return "B"
+    else:
+        return "A" 
+    
 def add_people(cashflow):
     while True:
         person_add = input("Enter a name to be added: ")
@@ -124,14 +129,19 @@ def add_cashflow(cashflow):
     description = input('Enter description: ')
 
     while True:
-        try:
-            day = input('Enter day of month due (1-31): ')
-            if (1 <= int(day) <= 31):
-                break
-            else:
-                print("Please enter a number between 1 & 31")
-        except ValueError:
-                print('Invalid day. Please enter a number between 1 and 31.')
+        if flow_type == "Expense":
+            try:
+                day = input('Enter day of month due (1-31): ')
+                if (1 <= int(day) <= 31):
+                    payperiod = find_pay_period(int(day))
+                    break
+                else:
+                    print("Please enter a number between 1 & 31")
+            except ValueError:
+                    print('Invalid day. Please enter a number between 1 and 31.')
+        else:
+            payperiod = "I"
+            break
     for each in cashflow['people']:
         print(each)
     while True:
@@ -140,7 +150,7 @@ def add_cashflow(cashflow):
             break
         else:
             print("Please enter a name from existing people.")
-    cashflow['cashflows'].append({'id': str(uuid.uuid4())[:4], 'category': category, 'description': description, 'amount': amount,  'day': day, 'payee': payee,'flow_type': flow_type})
+    cashflow['cashflows'].append({'id': str(uuid.uuid4())[:4], 'category': category, 'description': description, 'amount': amount,  'payperiod': payperiod, 'payee': payee,'flow_type': flow_type})
 
 def remove_cashflow(cashflow, id):
     for index, item in enumerate(cashflow['cashflows']):

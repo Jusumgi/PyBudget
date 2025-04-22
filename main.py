@@ -2,7 +2,7 @@ import cashflow
 import getch
 import os
 import getfiles
-import copy
+import ast
 
 folder_path = "saves/"
 
@@ -30,7 +30,12 @@ def main():
         choice = getch.getch()
         match(choice):
             case "1":
-                print(loaded_file)
+                try:
+                    loaded_cashflow = ast.literal_eval(loaded_file)
+                    cashflow.print_cashflow(loaded_cashflow)
+                except UnboundLocalError:
+                    print("No file loaded.")
+                    input()
             case "2":
                 pass
             case "3":

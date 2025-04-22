@@ -1,2 +1,4 @@
 saves/*
 my-venv/*
+.vscode
+__pycache__

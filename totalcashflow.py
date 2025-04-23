@@ -14,7 +14,6 @@ def total_cashflow(cashflow):
         amount = round(each['amount'], 2)
         totals[flow_type] = totals.get(flow_type, 0) + amount
         totals[category] = totals.get(category, 0) + amount
-        totals[category] = totals.get(category, 0) + amount
         categories_by_flow[flow_type].add(category)
 
     income = round(totals['Income'], 2)

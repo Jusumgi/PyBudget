@@ -108,8 +108,8 @@ def expenseplan(cashflow):
             'Total': format_value(payee_data['total']),
             'A': format_value(payee_a),
             'B': format_value(payee_b),
-            'Needed A': format_value(round(needed_a,2)),
-            'Needed B': format_value(round(needed_b,2))
+            'Needed A': format_value(round(needed_a, 2)),
+            'Needed B': format_value(round(needed_b, 2))
         }
         payee_rows.append(payee_row)
     
@@ -129,7 +129,15 @@ def expenseplan(cashflow):
             continue
         
         max_need_payee, max_need = needs[0]
-        print(f"For pay period {period}, {max_need_payee} needs ${max_need:.2f}.")
+        rounded_max_need = round(max_need,2)
+        # Adjust need by the payee's own income
+        max_need_income_half = payee_income.get(max_need_payee, 0) / 2
+        net_need = rounded_max_need - max_need_income_half
+        if net_need <= 0:
+            print(f"For pay period {period}, {max_need_payee}'s need of ${rounded_max_need:.2f} is covered by their income of ${max_need_income_half:.2f}.")
+            continue
+        
+        print(f"For pay period {period}, {max_need_payee} needs ${net_need:.2f} after their income of ${max_need_income_half:.2f}.")
         
         # Calculate surplus for other payees: (income / 2) - Needed
         surplus_payees = []
@@ -145,16 +153,16 @@ def expenseplan(cashflow):
             print(f"No payees have surplus to cover {max_need_payee}'s need in pay period {period}.")
             continue
         
-        # Distribute the need among surplus payees
+        # Distribute the net need among surplus payees
         total_surplus = sum(surplus for _, surplus in surplus_payees)
-        remaining_need = max_need
+        remaining_need = net_need
         for payee, surplus in sorted(surplus_payees, key=lambda x: x[1], reverse=True):  # Sort by surplus descending
-            if remaining_need <= 0:
+            if remaining_need <= 0.0:
                 break
             # Calculate how much this payee should pay (proportional to their surplus)
             contribution = min(surplus, remaining_need)
-            if contribution > 0:
+            if contribution > 0.0:
                 print(f"  {payee} should pay ${contribution:.2f} to {max_need_payee}.")
                 remaining_need -= contribution
-        if remaining_need > 0:
+        if remaining_need > 0.0:
             print(f"  Remaining need of ${remaining_need:.2f} for {max_need_payee} could not be covered.")

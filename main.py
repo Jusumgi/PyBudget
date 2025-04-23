@@ -1,5 +1,4 @@
-from clearscreen import clear_screen
-from getch import getch
+from cashflowtools import *
 from totalcashflow import total_cashflow
 from getfiles import get_file_names
 from cashflowmgmt import load_cashflow, print_cashflow
@@ -16,7 +15,7 @@ def main():
     print("Welcome to Expense Tracker")
     print("(S)tart Fresh or (L)oad?")
     loaded_file = None
-    choice = getch()
+    choice = getchit()
     if choice == "s":
         filename = input("Enter a name for the new file: ")
         loaded_cashflow = {"filename": filename, "cashflows":[], "people": []} 
@@ -41,7 +40,7 @@ def main():
         print("(2) View Statistics")
         print("(3) Edit Cashflow")
         print("(q) Exit")
-        choice = getch()
+        choice = getchit()
         match(choice):
             case "1":
                 try:
@@ -52,7 +51,7 @@ def main():
             case "2":
                 clear_screen()
                 total_cashflow(loaded_cashflow)
-                getch()
+                getchit()
             case "3":
                 loaded_cashflow = cashflow(filename, loaded_cashflow)
             case "q":

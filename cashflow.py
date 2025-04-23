@@ -1,11 +1,6 @@
-from colorama import Fore, Style
-from tabulate import tabulate
 from totalcashflow import total_cashflow
-from getch import getch
 from cashflowmgmt import *
-import uuid
-from clearscreen import clear_screen
-import copy
+from cashflowtools import clear_screen
 import ast
 import getfiles
 
@@ -35,7 +30,7 @@ def people_management(cashflow):
             print(each)
         print("(a)dd or (r)emove people?")
         print("Press b to go back")
-        peepmgmt = getch()
+        peepmgmt = getchit()
         match(peepmgmt):
             case 'a':
                 add_people(cashflow)  
@@ -65,18 +60,18 @@ def cashflow(filename, loaded_cashflow):
         print('(3) List cashflow')
         print('(4) Show total cashflow')
         print('(5) Save Cashflow')
-        print('(6) Load Cashflow')
+        print('(6) Load Cashflow | Current File: '+cashflow['filename'])
         print('(q) Exit')
         print('--------------------------------')
         print('Select an option')
-        choice = getch()
+        choice = getchit()
 
         match(choice):
             case '1':
                 while True:
                     if not cashflow['people']:
                         print("Please add people first.")
-                        getch()
+                        getchit()
                         break
                     else:
                         cashflow_management(cashflow)

@@ -1,6 +1,6 @@
-from getch import getch
+from cashflowtools import getchit
 from tabulate import tabulate
-from clearscreen import clear_screen
+from cashflowtools import clear_screen
 from colorama import Fore, Style
 import copy
 import uuid
@@ -26,7 +26,7 @@ def load_cashflow(filename):
 def add_cashflow(cashflow):
     print('Enter flow type (i)ncome/(e)xpense: ')
     while True:
-        flow_type = getch()
+        flow_type = getchit()
         match(flow_type):
             case 'i':
                 flow_type = 'Income'
@@ -55,7 +55,7 @@ def add_cashflow(cashflow):
             print('(2) Capital Gains')
             print('(3) Government Assistance (SSI, TANF, GA)')
             print('(4) Other')
-            category = getch()
+            category = getchit()
             match(category):
                 case '1':
                     category = 'Wages'
@@ -80,7 +80,7 @@ def add_cashflow(cashflow):
             print('(4) Debt')
             print('(5) Misc')
             print("Select a category")
-            category = getch()
+            category = getchit()
             match(category):
                 case '1':
                     category = 'Bills'
@@ -133,7 +133,7 @@ def remove_cashflow(cashflow, id):
             print(tabulate([cashflow['cashflows'][index]], headers='keys'))
             print("Are you sure you want to remove? (y)es or (n)o")
             while True:
-                confirmation = getch()
+                confirmation = getchit()
                 if confirmation == 'y':
                     cashflow['cashflows'].pop(index)
                     print('Cashflow removed')
@@ -165,7 +165,7 @@ def cashflow_management(cashflow):
             print_cashflow(cashflow)
             print("(a)dd or (r)emove cashflow?")
             print("Press b to go back")
-            cfmgmt = getch()
+            cfmgmt = getchit()
             match(cfmgmt):
                 case 'a':
                     add_cashflow(cashflow)

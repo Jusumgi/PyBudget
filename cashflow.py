@@ -89,14 +89,38 @@ def add_cashflow(cashflow):
         try:
             amount = float(input('Enter amount: '))
             if isinstance(amount, float) and amount > 0:
-                break
+                if flow_type == 'Expense':
+                    amount = -amount
+                    break
+                else:
+                    break
         except ValueError:
             pass
         print('Invalid amount. Please enter a number.')
 
     while True:
         if flow_type == "Income":
-            category = "Income"
+            print('(1) Wages')
+            print('(2) Capital Gains')
+            print('(3) Government Assistance (SSI, TANF, GA)')
+            print('(4) Other')
+            category = getch.getch()
+            match(category):
+                case '1':
+                    category = 'Wages'
+                    break
+                case '2':
+                    category = 'Capital Gains'
+                    break
+                case '3':
+                    category = 'Gov. Assist.'
+                    break
+                case '4':
+                    category = 'Other'
+                    break
+                case _:
+                    print('Invalid Entry, please select from the provided categories.')
+                    pass
             break
         else:
             print('(1) Bills')
@@ -199,17 +223,66 @@ def print_cashflow(cashflow):
     print(tabulate(printed_cashflow['cashflows'], headers='keys', disable_numparse=True, tablefmt='double_grid'))
 
         
-def total_cashflow(cashflow):
-    try:
-        return sum(map(lambda cf: cf['amount'], cashflow['cashflows']))
-    except TypeError:
-        print("Broken :(")
-        getch.getch()
+# def total_cashflow(cashflow):
+#     try:
+#         return sum(map(lambda cf: cf['amount'], cashflow['cashflows']))
+#     except TypeError:
+#         print("Broken :(")
+#         getch.getch()
         
+
+# def total_cashflow(cashflow):
+#     totals = {}
+#     for each in cashflow['cashflows']:
+#         flow_type = each['flow_type']
+#         category = each['category']
+#         amount = each['amount']
+#         totals[flow_type] = totals.get(flow_type, 0) + amount
+#         totals[category] = totals.get(category, 0) + amount
+#     for each in totals:
+#         if totals[each] < 0:
+#             totals[each] = Fore.RED + '$' + str(totals[each]) + Style.RESET_ALL
+#         else:
+#             totals[each] = Fore.GREEN + '$' + str(totals[each]) + Style.RESET_ALL
+
+#     # Get all flow_type values from cashflow to prioritize them
+#     flow_types = [item['flow_type'] for item in cashflow['cashflows']]
+#     # Sort keys: flow_types first, then categories
+#     sorted_keys = sorted(totals.keys(), key=lambda x: (x not in flow_types, x))
     
-def filter_cashflow_by_id(cashflow, id):
-    return filter(lambda expense: expense['id'] == id, cashflow)
+#     # Create a new dictionary with sorted keys for tabulate
+#     sorted_totals = {key: totals[key] for key in sorted_keys}
+#     print(tabulate([sorted_totals], headers='keys'))
+def total_cashflow(cashflow):
+    # Initialize dictionaries to store totals and track categories per flow_type
+    totals = {}
+    categories_by_flow = {'Income': set(), 'Expense': set()}
     
+    # Calculate totals and group categories by flow_type
+    for each in cashflow['cashflows']:
+        flow_type = each['flow_type']
+        category = each['category']
+        amount = each['amount']
+        totals[flow_type] = totals.get(flow_type, 0) + amount
+        totals[category] = totals.get(category, 0) + amount
+        categories_by_flow[flow_type].add(category)
+    
+    # Format totals with color based on value
+    for key in totals:
+        if totals[key] < 0:
+            totals[key] = Fore.RED + '$' + str(totals[key]) + Style.RESET_ALL
+        else:
+            totals[key] = Fore.GREEN + '$' + str(totals[key]) + Style.RESET_ALL
+    
+    # Define the order of columns: Income, its categories, Expense, its categories
+    sorted_keys = ['Income'] + sorted(categories_by_flow['Income']) + \
+                  ['Expense'] + sorted(categories_by_flow['Expense'])
+    
+    # Create a new dictionary with only the keys that exist in totals
+    sorted_totals = {key: totals[key] for key in sorted_keys if key in totals}
+    
+    # Print the table using tabulate
+    print(tabulate([sorted_totals], headers='keys'))
 
 def cashflowed(filename, loaded_cashflow):
     cashflow = {"filename": filename, "cashflows":loaded_cashflow['cashflows'], "people": loaded_cashflow['people']}
@@ -252,7 +325,8 @@ def cashflowed(filename, loaded_cashflow):
                 input("Press any key to continue")
             case '4':
                 clear_screen()
-                print('\nTotal cashflow: ', total_cashflow(cashflow))
+                # print('\nTotal cashflow: ', total_cashflow(cashflow))
+                total_cashflow(cashflow)
                 input("Press any key to continue")
             case '5':
                 save_cashflow(cashflow)

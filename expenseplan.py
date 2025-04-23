@@ -154,7 +154,6 @@ def expenseplan(cashflow):
             continue
         
         # Distribute the net need among surplus payees
-        total_surplus = sum(surplus for _, surplus in surplus_payees)
         remaining_need = net_need
         for payee, surplus in sorted(surplus_payees, key=lambda x: x[1], reverse=True):  # Sort by surplus descending
             if remaining_need <= 0.0:

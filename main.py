@@ -17,24 +17,29 @@ def main():
     print("Welcome to Expense Tracker")
     print("(S)tart Fresh or (L)oad?")
     loaded_file = None
-    choice = getchit()
-    if choice == "s":
-        filename = input("Enter a name for the new file: ")
-        loaded_cashflow = {"filename": filename, "cashflows":[], "people": []} 
-    elif choice == "l":
-        files = get_file_names("saves/")
-        print(files)
-        for each in files:
-            print(each)
-        while True:
-            file = input("Enter file name: ")
-            if file in files:
-                filename = file
-                loaded_file = load_cashflow(file)
-                loaded_cashflow = ast.literal_eval(loaded_file)
-                break
-            else:
-                print(file+" does not exist. Please try again.")
+    while True:
+        choice = getchit()
+        if choice == "s":
+            filename = input("Enter a name for the new file: ")
+            loaded_cashflow = {"filename": filename, "cashflows":[], "people": []}
+            break
+        elif choice == "l":
+            files = get_file_names("saves/")
+            print(files)
+            for each in files:
+                print(each)
+            while True:
+                file = input("Enter file name: ")
+                if file in files:
+                    filename = file
+                    loaded_file = load_cashflow(file)
+                    loaded_cashflow = ast.literal_eval(loaded_file)
+                    break
+                else:
+                    print(file+" does not exist. Please try again.")
+            break
+        else:
+            print("Invalid input")
     while True:
         clear_screen()
         print("Expense Tracker Main Menu")

@@ -106,8 +106,8 @@ def expenseplan(cashflow):
         payee_row = {
             'Payee': payee,
             'Total': format_value(payee_data['total']),
-            'A': format_value(payee_a),
-            'B': format_value(payee_b),
+            'A Expenses': format_value(payee_a),
+            'B Expenses': format_value(payee_b),
             'Needed A': format_value(round(needed_a, 2)),
             'Needed B': format_value(round(needed_b, 2))
         }

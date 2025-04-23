@@ -71,8 +71,8 @@ def expenseplan(cashflow):
     # Add formatted A and B values to rows
     income_row['A'] = format_value(half_income)
     income_row['B'] = format_value(half_income)
-    expense_row['A'] = format_value(expense_a)
-    expense_row['B'] = format_value(expense_b)
+    expense_row['A'] = format_value(round(expense_a,2))
+    expense_row['B'] = format_value(round(expense_b,2))
     disposable_row['A'] = format_value(disposable_a)
     disposable_row['B'] = format_value(disposable_b)
     each_row['A'] = format_value(round(split_disposable_a, 2))
@@ -162,6 +162,7 @@ def expenseplan(cashflow):
             contribution = min(surplus, remaining_need)
             if contribution > 0.0:
                 print(f"  {payee} should pay ${contribution:.2f} to {max_need_payee}.")
-                remaining_need -= contribution
+                remaining_need -= round(contribution,2)
         if remaining_need > 0.0:
+            print(remaining_need)
             print(f"  Remaining need of ${remaining_need:.2f} for {max_need_payee} could not be covered.")

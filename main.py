@@ -1,5 +1,6 @@
 import cashflow
-import getch
+from clearscreen import clear_screen
+from getch import getch
 import os
 import getfiles
 import ast
@@ -13,7 +14,7 @@ def main():
     print("Welcome to Expense Tracker")
     print("(S)tart Fresh or (L)oad?")
     loaded_file = None
-    choice = getch.getch()
+    choice = getch()
     if choice == "s":
         filename = input("Enter a name for the new file: ")
         loaded_cashflow = {"filename": filename, "cashflows":[], "people": []} 
@@ -38,7 +39,7 @@ def main():
         print("(2) View Statistics")
         print("(3) Edit Cashflow")
         print("(q) Exit")
-        choice = getch.getch()
+        choice = getch()
         match(choice):
             case "1":
                 try:
@@ -47,7 +48,9 @@ def main():
                     print("No file loaded.")
                     input()
             case "2":
-                pass
+                clear_screen()
+                cashflow.total_cashflow(loaded_cashflow)
+                getch()
             case "3":
                 loaded_cashflow = cashflow.cashflowed(filename, loaded_cashflow)
             case "q":

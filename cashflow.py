@@ -1,9 +1,8 @@
 from colorama import Fore, Style
 from tabulate import tabulate
-import getch
+from getch import getch
 import uuid
-import os
-import platform
+from clearscreen import clear_screen
 import copy
 import ast
 import getfiles
@@ -39,7 +38,7 @@ def people_management(cashflow):
             print(each)
         print("(a)dd or (r)emove people?")
         print("Press b to go back")
-        peepmgmt = getch.getch()
+        peepmgmt = getch()
         match(peepmgmt):
             case 'a':
                 add_people(cashflow)  
@@ -51,14 +50,7 @@ def people_management(cashflow):
                     remove_people(cashflow)
             case 'b':
                 break
-def clear_screen():
-    system = platform.system()
-    if system == "Windows":
-        os.system('cls')
-    elif system == "Linux" or system == "Darwin":
-        os.system('clear')
-    else:
-        print("Operating System not supported")
+
 
 def save_cashflow(cashflow):
     savefile = input("Enter save name: ")
@@ -129,7 +121,7 @@ def add_cashflow(cashflow):
             print('(4) Debt')
             print('(5) Misc')
             print("Select a category")
-            category = getch.getch()
+            category = getch()
             match(category):
                 case '1':
                     category = 'Bills'
@@ -182,7 +174,7 @@ def remove_cashflow(cashflow, id):
             print(tabulate([cashflow['cashflows'][index]], headers='keys'))
             print("Are you sure you want to remove? (y)es or (n)o")
             while True:
-                confirmation = getch.getch()
+                confirmation = getch()
                 if confirmation == 'y':
                     cashflow['cashflows'].pop(index)
                     print('Cashflow removed')
@@ -203,7 +195,7 @@ def cashflow_management(cashflow):
             print_cashflow(cashflow)
             print("(a)dd or (r)emove cashflow?")
             print("Press b to go back")
-            cfmgmt = getch.getch()
+            cfmgmt = getch()
             match(cfmgmt):
                 case 'a':
                     add_cashflow(cashflow)
@@ -222,37 +214,6 @@ def print_cashflow(cashflow):
             each['amount'] = Fore.RED + '$' + str(each['amount']) + Style.RESET_ALL
     print(tabulate(printed_cashflow['cashflows'], headers='keys', disable_numparse=True, tablefmt='double_grid'))
 
-        
-# def total_cashflow(cashflow):
-#     try:
-#         return sum(map(lambda cf: cf['amount'], cashflow['cashflows']))
-#     except TypeError:
-#         print("Broken :(")
-#         getch.getch()
-        
-
-# def total_cashflow(cashflow):
-#     totals = {}
-#     for each in cashflow['cashflows']:
-#         flow_type = each['flow_type']
-#         category = each['category']
-#         amount = each['amount']
-#         totals[flow_type] = totals.get(flow_type, 0) + amount
-#         totals[category] = totals.get(category, 0) + amount
-#     for each in totals:
-#         if totals[each] < 0:
-#             totals[each] = Fore.RED + '$' + str(totals[each]) + Style.RESET_ALL
-#         else:
-#             totals[each] = Fore.GREEN + '$' + str(totals[each]) + Style.RESET_ALL
-
-#     # Get all flow_type values from cashflow to prioritize them
-#     flow_types = [item['flow_type'] for item in cashflow['cashflows']]
-#     # Sort keys: flow_types first, then categories
-#     sorted_keys = sorted(totals.keys(), key=lambda x: (x not in flow_types, x))
-    
-#     # Create a new dictionary with sorted keys for tabulate
-#     sorted_totals = {key: totals[key] for key in sorted_keys}
-#     print(tabulate([sorted_totals], headers='keys'))
 def total_cashflow(cashflow):
     # Initialize dictionaries to store totals and track categories per flow_type
     totals = {}
@@ -274,15 +235,36 @@ def total_cashflow(cashflow):
         else:
             totals[key] = Fore.GREEN + '$' + str(totals[key]) + Style.RESET_ALL
     
-    # Define the order of columns: Income, its categories, Expense, its categories
-    sorted_keys = ['Income'] + sorted(categories_by_flow['Income']) + \
-                  ['Expense'] + sorted(categories_by_flow['Expense'])
+    # Create separate dictionaries for Income and Expense rows
+    income_row = {'Type': 'Income'}
+    expense_row = {'Type': 'Expense'}
     
-    # Create a new dictionary with only the keys that exist in totals
-    sorted_totals = {key: totals[key] for key in sorted_keys if key in totals}
+    # Add Income and its categories to income_row
+    if 'Income' in totals:
+        income_row['Total'] = totals['Income']
+        for category in sorted(categories_by_flow['Income']):
+            if category in totals:
+                income_row[category] = totals[category]
+    
+    # Add Expense and its categories to expense_row
+    if 'Expense' in totals:
+        expense_row['Total'] = totals['Expense']
+        for category in sorted(categories_by_flow['Expense']):
+            if category in totals:
+                expense_row[category] = totals[category]
+    
+    # Collect rows for tabulate (only include non-empty rows)
+    rows = []
+    if len(income_row) > 1:  # Check if income_row has more than just 'Type'
+        rows.append(income_row)
+    if len(expense_row) > 1:  # Check if expense_row has more than just 'Type'
+        rows.append(expense_row)
     
     # Print the table using tabulate
-    print(tabulate([sorted_totals], headers='keys'))
+    if rows:
+        print(tabulate(rows, headers='keys', tablefmt='double_grid'))
+    else:
+        print("No data to display.")
 
 def cashflowed(filename, loaded_cashflow):
     cashflow = {"filename": filename, "cashflows":loaded_cashflow['cashflows'], "people": loaded_cashflow['people']}
@@ -304,14 +286,14 @@ def cashflowed(filename, loaded_cashflow):
         print('(q) Exit')
         print('--------------------------------')
         print('Select an option')
-        choice = getch.getch()
+        choice = getch()
 
         match(choice):
             case '1':
                 while True:
                     if not cashflow['people']:
                         print("Please add people first.")
-                        getch.getch()
+                        getch()
                         break
                     else:
                         cashflow_management(cashflow)

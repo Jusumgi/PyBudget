@@ -4,7 +4,6 @@ from cashflowtools import clear_screen
 import ast
 import getfiles
 
-
 def add_people(cashflow):
     while True:
         person_add = input("Enter a name to be added: ")
@@ -54,7 +53,8 @@ def cashflow(filename, loaded_cashflow):
         pass
     while True:
         clear_screen()
-        print('\nExpense Tracker')
+        print('Edit Cashflow Menu')
+        print("===========================")
         print('(1) Cashflow Management')
         print('(2) People Management')
         print('(3) List cashflow')

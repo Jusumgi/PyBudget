@@ -78,7 +78,8 @@ def add_cashflow(cashflow):
             print('(2) Grocery')
             print('(3) Subscription')
             print('(4) Debt')
-            print('(5) Misc')
+            print('(5) Other - Monthly')
+            print('(6) Other - Biweekly')
             print("Select a category")
             category = getchit()
             match(category):
@@ -92,11 +93,23 @@ def add_cashflow(cashflow):
                     category = 'Subscription'
                     break
                 case '4':
-                    category = 'Debt'
+                    while True:
+                        print("Is this a (m)inimum debt payment or (p)rincipal debt payment? ")
+                        debt = getchit()
+                        if debt == 'm':
+                            category = 'Debt'
+                            break
+                        elif debt == 'p':
+                            category = 'Debt Extra'
+                            break
+                        else:
+                            print("Press m for minimum payment, p for principal")
                     break
                 case '5':
-                    category = 'Misc'
+                    category = 'Other - Monthly'
                     break
+                case '6':
+                    category = 'Other - Biweekly'
                 case _:
                     print('Invalid Entry, please select from the provided categories.')
                     pass
@@ -106,6 +119,9 @@ def add_cashflow(cashflow):
     while True:
         if flow_type == "Expense":
             try:
+                if category == 'Grocery':
+                    payperiod = "M"
+                    break
                 day = input('Enter day of month due (1-31): ')
                 if (1 <= int(day) <= 31):
                     payperiod = find_pay_period(int(day))

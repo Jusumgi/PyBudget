@@ -3,6 +3,7 @@ from totalcashflow import total_cashflow
 from getfiles import get_file_names
 from cashflowmgmt import load_cashflow, print_cashflow
 from cashflow import cashflow
+from expenseplan import expenseplan
 import os
 import ast
 
@@ -12,6 +13,7 @@ if not os.path.exists(folder_path):
     os.makedirs(folder_path)
 
 def main():
+    clear_screen()
     print("Welcome to Expense Tracker")
     print("(S)tart Fresh or (L)oad?")
     loaded_file = None
@@ -34,9 +36,11 @@ def main():
             else:
                 print(file+" does not exist. Please try again.")
     while True:
+        clear_screen()
         print("Expense Tracker Main Menu")
+        print("===========================")
         print("Current File: "+loaded_cashflow['filename'])
-        print("(1) Show Loaded File (Temporary)")
+        print("(1) View Expense Plan")
         print("(2) View Statistics")
         print("(3) Edit Cashflow")
         print("(q) Exit")
@@ -44,9 +48,9 @@ def main():
         match(choice):
             case "1":
                 try:
-                    print_cashflow(loaded_cashflow)
+                    expenseplan(loaded_cashflow)
                 except UnboundLocalError:
-                    print("No file loaded.")
+                    print("No cashflow loaded.")
                     input()
             case "2":
                 clear_screen()

@@ -11,27 +11,26 @@ def total_cashflow(cashflow):
     for each in cashflow['cashflows']:
         flow_type = each['flow_type']
         category = each['category']
-        amount = each['amount']
+        amount = round(each['amount'], 2)
         totals[flow_type] = totals.get(flow_type, 0) + amount
         totals[category] = totals.get(category, 0) + amount
         categories_by_flow[flow_type].add(category)
-    
+
+    income = round(totals['Income'], 2)
+    expense = round(totals['Expense'], 2)
     # Calculate Disposable income (Income - Expense)
-    disposable = totals.get('Income', 0) + totals.get('Expense', 0)
-    
-    # Format totals with color based on value
-    for key in totals:
-        if totals[key] < 0:
-            totals[key] = Fore.RED + '$' + str(totals[key]) + Style.RESET_ALL
-        else:
-            totals[key] = Fore.GREEN + '$' + str(totals[key]) + Style.RESET_ALL
-    
+    disposable = round(income + expense, 2)
+
+    def format_value(value):
+        return (
+            Fore.RED + '$' + str(value) + Style.RESET_ALL if value < 0
+            else Fore.GREEN + '$' + str(value) + Style.RESET_ALL
+        )
     # Format Disposable with color
     disposable_formatted = (
         Fore.RED + '$' + str(disposable) + Style.RESET_ALL if disposable < 0
         else Fore.GREEN + '$' + str(disposable) + Style.RESET_ALL
     )
-    
     # Create separate dictionaries for Income, Expense, and Disposable rows
     income_row = {'Type': 'Income'}
     expense_row = {'Type': 'Expense'}
@@ -39,17 +38,17 @@ def total_cashflow(cashflow):
     
     # Add Income and its categories to income_row
     if 'Income' in totals:
-        income_row['Total'] = totals['Income']
+        income_row['Total'] = format_value(round(totals['Income'],2))
         for category in sorted(categories_by_flow['Income']):
             if category in totals:
-                income_row[category] = totals[category]
+                income_row[category] = format_value(round(totals[category],2))
     
     # Add Expense and its categories to expense_row
     if 'Expense' in totals:
-        expense_row['Total'] = totals['Expense']
+        expense_row['Total'] = format_value(round(totals['Expense'],2))
         for category in sorted(categories_by_flow['Expense']):
             if category in totals:
-                expense_row[category] = totals[category]
+                expense_row[category] = format_value(round(totals[category],2))
     
     # Add Disposable to disposable_row
     disposable_row['Total'] = disposable_formatted

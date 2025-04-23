@@ -1,8 +1,5 @@
 import os
 import platform
-
-
-
 system = platform.system()
 
 def getchit():

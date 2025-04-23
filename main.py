@@ -48,14 +48,20 @@ def main():
         match(choice):
             case "1":
                 try:
+                    clear_screen()
                     expenseplan(loaded_cashflow)
+                    getchit()
                 except UnboundLocalError:
                     print("No cashflow loaded.")
-                    input()
+                    getchit()
             case "2":
-                clear_screen()
-                total_cashflow(loaded_cashflow)
-                getchit()
+                try:
+                    clear_screen()
+                    total_cashflow(loaded_cashflow)
+                    getchit()
+                except KeyError:
+                    print("No cashflow loaded.")
+                    getchit()
             case "3":
                 loaded_cashflow = cashflow(filename, loaded_cashflow)
             case "q":

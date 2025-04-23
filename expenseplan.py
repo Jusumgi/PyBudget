@@ -12,8 +12,10 @@ def expenseplan(cashflow):
         payperiod = each['payperiod']
         amount = each['amount']
         people = cashflow['people']
+        payee = each['payee']
         totals[flow_type] = totals.get(flow_type, 0) + amount
         totals[payperiod] = totals.get(payperiod, 0) + amount
+        totals[payee] = totals.get(payee, 0) + amount
         payperiods_by_flow[flow_type].add(payperiod)
 
     income = round(totals.get('Income', 0),2)
@@ -24,7 +26,6 @@ def expenseplan(cashflow):
     b_expense = round(totals.get('B', 0),2)
     # Calculate Disposable income (Income - Expense)
     disposable = round(income + expense,2)
-   
     # Helper function to format values with color
     def format_value(value):
         return (
@@ -36,7 +37,7 @@ def expenseplan(cashflow):
     income_row = {'Type': 'Income', 'Total': format_value(income)}
     expense_row = {'Type': 'Expense', 'Total': format_value(expense)}
     disposable_row = {'Type': 'Disposable', 'Total': format_value(disposable)}
-    each_row = {'Type': 'Split', 'Total': None}
+    each_row = {'Type': 'Disp. Split'}
     
     # Expense: Split payperiod M evenly between A and B, add direct A and B expenses
     expense_a = monthly / 2 + a_expense

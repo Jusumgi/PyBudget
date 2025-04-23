@@ -14,6 +14,7 @@ def total_cashflow(cashflow):
         amount = round(each['amount'], 2)
         totals[flow_type] = totals.get(flow_type, 0) + amount
         totals[category] = totals.get(category, 0) + amount
+        totals[category] = totals.get(category, 0) + amount
         categories_by_flow[flow_type].add(category)
 
     income = round(totals['Income'], 2)
@@ -49,7 +50,6 @@ def total_cashflow(cashflow):
         for category in sorted(categories_by_flow['Expense']):
             if category in totals:
                 expense_row[category] = format_value(round(totals[category],2))
-    
     # Add Disposable to disposable_row
     disposable_row['Total'] = disposable_formatted
     

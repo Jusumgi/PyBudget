@@ -1,8 +1,10 @@
-import cashflow
 from clearscreen import clear_screen
 from getch import getch
+from totalcashflow import total_cashflow
+from getfiles import get_file_names
+from cashflowmgmt import load_cashflow, print_cashflow
+from cashflow import cashflow
 import os
-import getfiles
 import ast
 
 folder_path = "saves/"
@@ -19,7 +21,7 @@ def main():
         filename = input("Enter a name for the new file: ")
         loaded_cashflow = {"filename": filename, "cashflows":[], "people": []} 
     elif choice == "l":
-        files = getfiles.get_file_names("saves/")
+        files = get_file_names("saves/")
         print(files)
         for each in files:
             print(each)
@@ -27,7 +29,7 @@ def main():
             file = input("Enter file name: ")
             if file in files:
                 filename = file
-                loaded_file = cashflow.load_cashflow(file)
+                loaded_file = load_cashflow(file)
                 loaded_cashflow = ast.literal_eval(loaded_file)
                 break
             else:
@@ -43,16 +45,16 @@ def main():
         match(choice):
             case "1":
                 try:
-                    cashflow.print_cashflow(loaded_cashflow)
+                    print_cashflow(loaded_cashflow)
                 except UnboundLocalError:
                     print("No file loaded.")
                     input()
             case "2":
                 clear_screen()
-                cashflow.total_cashflow(loaded_cashflow)
+                total_cashflow(loaded_cashflow)
                 getch()
             case "3":
-                loaded_cashflow = cashflow.cashflowed(filename, loaded_cashflow)
+                loaded_cashflow = cashflow(filename, loaded_cashflow)
             case "q":
                 break
 main()

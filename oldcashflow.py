@@ -42,7 +42,7 @@ def people_management(cashflow):
                 break
 
 
-def cashflow(filename, loaded_cashflow):
+def cashflow_menu(filename, loaded_cashflow):
     cashflow = {"filename": filename, "cashflows":loaded_cashflow['cashflows'], "people": loaded_cashflow['people']}
     try:
         with open("saves/people.txt") as file:

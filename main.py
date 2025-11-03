@@ -1,7 +1,7 @@
 from totalcashflow import total_cashflow
 from tools import *
 from cashflowmgmt import load_cashflow
-from cashflow import cashflow
+from oldcashflow import cashflow_menu
 from expenseplan import expenseplan
 import os
 import ast
@@ -67,7 +67,7 @@ def main():
                     print("No cashflow loaded.")
                     getchit()
             case "3":
-                loaded_cashflow = cashflow(filename, loaded_cashflow)
+                loaded_cashflow = cashflow_menu(filename, loaded_cashflow)
             case "q":
                 break
 main()

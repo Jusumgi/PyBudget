@@ -1,6 +1,5 @@
-from cashflowtools import getchit
+from tools import getchit, clear_screen
 from tabulate import tabulate
-from cashflowtools import clear_screen
 from colorama import Fore, Style
 import copy
 import uuid

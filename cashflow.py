@@ -1,8 +1,7 @@
 from totalcashflow import total_cashflow
 from cashflowmgmt import *
-from cashflowtools import clear_screen
+from tools import clear_screen, get_file_names
 import ast
-import getfiles
 
 def add_people(cashflow):
     while True:
@@ -92,7 +91,7 @@ def cashflow(filename, loaded_cashflow):
                 save_cashflow(cashflow)
             case '6':
                 clear_screen()
-                print(getfiles.get_file_names("saves/"))
+                print(get_file_names("saves/"))
                 cashflow_filename = input("Enter file name: ")
                 loaded_file = load_cashflow(cashflow_filename)
                 if loaded_file == 5:

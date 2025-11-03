@@ -2,7 +2,7 @@ from totalcashflow import total_cashflow
 from tools import *
 from cashflowmgmt import load_cashflow
 from oldcashflow import cashflow_menu
-from expenseplan import expenseplan
+from oldexpenseplan import expenseplan
 import os
 import ast
 

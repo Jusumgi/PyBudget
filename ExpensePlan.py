@@ -341,7 +341,7 @@ class ExpensePlan:
                 case '4':
                     clear_screen()
                     # print('\nTotal cashflow: ', total_cashflow(cashflow))
-                    self.total_cashflow(self.cashflows)
+                    self.total_cashflow()
                     input("Press any key to continue")
                 case 'q':
                     try:

@@ -1,11 +1,6 @@
-from totalcashflow import total_cashflow
 from tools import *
-from cashflowmgmt import load_cashflow
-from oldcashflow import cashflow_menu
-from oldexpenseplan import expenseplan
 from ExpensePlan import ExpensePlan
 import os
-import ast
 import pickle
 
 folder_path = "saves/"
@@ -55,17 +50,17 @@ def main():
         choice = getchit()
         match(choice):
             case "1":
-                try:
+                # try:
                     clear_screen()
-                    expenseplan(loaded_cashflow)
+                    loaded_cashflow.print_expenseplan()
                     getchit()
-                except UnboundLocalError:
-                    print("No cashflow loaded.")
-                    getchit()
+                # except UnboundLocalError:
+                #     print("No cashflow loaded.")
+                #     getchit()
             case "2":
                 try:
                     clear_screen()
-                    total_cashflow(loaded_cashflow)
+                    loaded_cashflow.total_cashflow()
                     getchit()
                 except KeyError:
                     print("No cashflow loaded.")
@@ -74,6 +69,7 @@ def main():
                 loaded_cashflow = loaded_cashflow.display_expense_plan_menu()
             case "4":
                 expenseplan_filename = input("Enter save name: ")
+                loaded_cashflow.filename = expenseplan_filename
                 with open("saves/"+expenseplan_filename+".pkl", "wb") as file:
                     pickle.dump(loaded_cashflow, file)
             case "5":

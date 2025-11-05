@@ -1,7 +1,7 @@
 from colorama import Fore, Style
 from tabulate import tabulate
 
-def expenseplan(cashflow):
+def print_expenseplan(cashflow):
     # Initialize dictionaries to store totals and track payperiods per flow_type
     totals = {}
     payperiods_by_flow = {'Income': set(), 'Expense': set()}

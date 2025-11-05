@@ -1,11 +1,7 @@
-from cashflowtools import *
-from totalcashflow import total_cashflow
-from getfiles import get_file_names
-from cashflowmgmt import load_cashflow, print_cashflow
-from cashflow import cashflow
-from expenseplan import expenseplan
+from tools import *
+from ExpensePlan import ExpensePlan
 import os
-import ast
+import pickle
 
 folder_path = "saves/"
 
@@ -21,7 +17,7 @@ def main():
         choice = getchit()
         if choice == "s":
             filename = input("Enter a name for the new file: ")
-            loaded_cashflow = {"filename": filename, "cashflows":[], "people": []}
+            loaded_cashflow = ExpensePlan(filename)
             break
         elif choice == "l":
             files = get_file_names("saves/")
@@ -31,9 +27,9 @@ def main():
             while True:
                 file = input("Enter file name: ")
                 if file in files:
-                    filename = file
-                    loaded_file = load_cashflow(file)
-                    loaded_cashflow = ast.literal_eval(loaded_file)
+                    with open("saves/"+file+".pkl", "rb") as f:
+                        loaded_cashflow = pickle.load(f)
+                    print(loaded_cashflow)
                     break
                 else:
                     print(file+" does not exist. Please try again.")
@@ -41,34 +37,58 @@ def main():
         else:
             print("Invalid input")
     while True:
-        clear_screen()
+        # clear_screen()
         print("Expense Tracker Main Menu")
         print("===========================")
-        print("Current File: "+loaded_cashflow['filename'])
+        print("Current File: "+loaded_cashflow.filename)
         print("(1) View Expense Plan")
         print("(2) View Statistics")
-        print("(3) Edit Cashflow")
+        print("(3) Edit Expense Plan")
+        print("(4) Save Expense Plan")
+        print("(5) Load Expense Plan")
         print("(q) Exit")
         choice = getchit()
         match(choice):
             case "1":
-                try:
+                # try:
                     clear_screen()
-                    expenseplan(loaded_cashflow)
+                    loaded_cashflow.print_expenseplan()
                     getchit()
-                except UnboundLocalError:
-                    print("No cashflow loaded.")
-                    getchit()
+                # except UnboundLocalError:
+                #     print("No cashflow loaded.")
+                #     getchit()
             case "2":
-                try:
+                # try:
                     clear_screen()
-                    total_cashflow(loaded_cashflow)
+                    loaded_cashflow.total_cashflow()
                     getchit()
-                except KeyError:
-                    print("No cashflow loaded.")
-                    getchit()
+                # except KeyError:
+                #     print("No cashflow loaded.")
+                #     getchit()
             case "3":
-                loaded_cashflow = cashflow(filename, loaded_cashflow)
+                loaded_cashflow = loaded_cashflow.display_expense_plan_menu()
+            case "4":
+                expenseplan_filename = input("Enter save name: ")
+                loaded_cashflow.filename = expenseplan_filename
+                with open("saves/"+expenseplan_filename+".pkl", "wb") as file:
+                    pickle.dump(loaded_cashflow, file)
+            case "5":
+                print(get_file_names("saves/"))
+                expenseplan_filename = input("Enter file name: ")
+                try:
+                    with open("saves/"+expenseplan_filename+".pkl", "rb") as file:
+                        loaded_file = pickle.load(file)
+                except FileNotFoundError:
+                    loaded_file = 5
+                if loaded_file == 5:
+                    print("File not found.")
+                    input('Press any key to continue')
+                else:
+                    loaded_cashflow = loaded_file
+                    clear_screen()
+                    print("Loaded Expense Plan:")
+                    loaded_cashflow.print_cashflow()
+                    input('Press any key to continue')
             case "q":
                 break
 main()

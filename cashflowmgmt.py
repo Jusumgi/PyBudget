@@ -1,6 +1,5 @@
-from cashflowtools import getchit
+from tools import getchit, clear_screen
 from tabulate import tabulate
-from cashflowtools import clear_screen
 from colorama import Fore, Style
 import copy
 import uuid
@@ -133,25 +132,25 @@ def add_cashflow(cashflow):
         else:
             payperiod = "I"
             break
-    for each in cashflow['people']:
+    for each in cashflow.people:
         print(each)
     while True:
         payee = input('Select a Payee: ')
-        if payee in cashflow['people']:
+        if payee in cashflow.people:
             break
         else:
             print("Please enter a name from existing people.")
-    cashflow['cashflows'].append({'id': str(uuid.uuid4())[:4], 'category': category, 'description': description, 'amount': amount,  'payperiod': payperiod, 'payee': payee,'flow_type': flow_type})
+    cashflow.cashflows.append({'id': str(uuid.uuid4())[:4], 'category': category, 'description': description, 'amount': amount,  'payperiod': payperiod, 'payee': payee,'flow_type': flow_type})
 
 def remove_cashflow(cashflow, id):
-    for index, item in enumerate(cashflow['cashflows']):
+    for index, item in enumerate(cashflow.cashflows):
         if item['id'] == id:
-            print(tabulate([cashflow['cashflows'][index]], headers='keys'))
+            print(tabulate([cashflow.cashflows[index]], headers='keys'))
             print("Are you sure you want to remove? (y)es or (n)o")
             while True:
                 confirmation = getchit()
                 if confirmation == 'y':
-                    cashflow['cashflows'].pop(index)
+                    cashflow.cashflows.pop(index)
                     print('Cashflow removed')
                     input("Press any key to continue")
                     break
@@ -167,18 +166,18 @@ def remove_cashflow(cashflow, id):
 
 def print_cashflow(cashflow):
     printed_cashflow = copy.deepcopy(cashflow)
-    for each in printed_cashflow['cashflows']:
+    for each in printed_cashflow:
         if each['flow_type'] == 'Income':
             each['amount'] = Fore.GREEN + '$' + str(each['amount']) + Style.RESET_ALL
         else:
             each['amount'] = Fore.RED + '$' + str(each['amount']) + Style.RESET_ALL
-    print(tabulate(printed_cashflow['cashflows'], headers='keys', disable_numparse=True, tablefmt='double_grid'))
+    print(tabulate(printed_cashflow, headers='keys', disable_numparse=True, tablefmt='double_grid'))
 
 def cashflow_management(cashflow):
         while True:
             clear_screen()
             print("Current Cashflows")
-            print_cashflow(cashflow)
+            print_cashflow(cashflow.cashflows)
             print("(a)dd or (r)emove cashflow?")
             print("Press b to go back")
             cfmgmt = getchit()
@@ -186,7 +185,7 @@ def cashflow_management(cashflow):
                 case 'a':
                     add_cashflow(cashflow)
                 case 'r':
-                    print_cashflow(cashflow)
+                    print_cashflow(cashflow.cashflows)
                     id = input('Enter the ID of cashflow to be removed: ')
                     remove_cashflow(cashflow, id)
                 case 'b':

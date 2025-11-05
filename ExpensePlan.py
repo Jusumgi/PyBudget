@@ -1,8 +1,6 @@
-from tools import clear_screen, getchit, get_file_names
-import ast
+from tools import clear_screen, getchit
 import copy
 import tabulate
-import pickle
 from cashflowmgmt import *
 from colorama import Fore, Style
 

@@ -67,7 +67,7 @@ def get_file_names(folder_path):
   """
   try:
     all_entries = os.listdir(folder_path)
-    file_names = [entry.removesuffix(".txt") for entry in all_entries if os.path.isfile(os.path.join(folder_path, entry))]
+    file_names = [entry.removesuffix(".pkl") for entry in all_entries if os.path.isfile(os.path.join(folder_path, entry))]
     return file_names
   except FileNotFoundError:
     return f"Error: Folder not found at path: {folder_path}"

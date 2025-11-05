@@ -236,9 +236,11 @@ class ExpensePlan:
             totals[flow_type] = totals.get(flow_type, 0) + amount
             totals[category] = totals.get(category, 0) + amount
             categories_by_flow[flow_type].add(category)
-
-        income = round(totals['Income'], 2)
-        expense = round(totals['Expense'], 2)
+        
+        try: income = round(totals['Income'], 2)
+        except KeyError: income = 0.0
+        try: expense = round(totals['Expense'], 2)
+        except KeyError: expense = 0.0
         # Calculate Disposable income (Income - Expense)
         disposable = round(income + expense, 2)
 

@@ -58,13 +58,13 @@ def main():
                 #     print("No cashflow loaded.")
                 #     getchit()
             case "2":
-                try:
+                # try:
                     clear_screen()
                     loaded_cashflow.total_cashflow()
                     getchit()
-                except KeyError:
-                    print("No cashflow loaded.")
-                    getchit()
+                # except KeyError:
+                #     print("No cashflow loaded.")
+                #     getchit()
             case "3":
                 loaded_cashflow = loaded_cashflow.display_expense_plan_menu()
             case "4":

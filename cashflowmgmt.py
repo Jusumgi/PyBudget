@@ -25,7 +25,7 @@ def load_cashflow(filename):
 def add_cashflow(cashflow):
     print('Enter flow type (i)ncome/(e)xpense: ')
     while True:
-        flow_type = getchit()
+        flow_type: str = getchit()
         match(flow_type):
             case 'i':
                 flow_type = 'Income'
@@ -37,7 +37,7 @@ def add_cashflow(cashflow):
                 print('Please input "i" for Income OR "e" for Expense')
     while True:
         try:
-            amount = float(input('Enter amount: '))
+            amount:float = float(input('Enter amount: '))
             if isinstance(amount, float) and amount > 0:
                 if flow_type == 'Expense':
                     amount = -amount
@@ -54,7 +54,7 @@ def add_cashflow(cashflow):
             print('(2) Capital Gains')
             print('(3) Government Assistance (SSI, TANF, GA)')
             print('(4) Other')
-            category = getchit()
+            category: str = getchit()
             match(category):
                 case '1':
                     category = 'Wages'
@@ -80,7 +80,7 @@ def add_cashflow(cashflow):
             print('(5) Other - Monthly')
             print('(6) Other - Biweekly')
             print("Select a category")
-            category = getchit()
+            category: str = getchit()
             match(category):
                 case '1':
                     category = 'Bills'
@@ -113,7 +113,7 @@ def add_cashflow(cashflow):
                     print('Invalid Entry, please select from the provided categories.')
                     pass
             
-    description = input('Enter description: ')
+    description: str = input('Enter description: ')
 
     while True:
         if flow_type == "Expense":
@@ -135,7 +135,7 @@ def add_cashflow(cashflow):
     for each in cashflow.people:
         print(each)
     while True:
-        payee = input('Select a Payee: ')
+        payee: str = input('Select a Payee: ')
         if payee in cashflow.people:
             break
         else:

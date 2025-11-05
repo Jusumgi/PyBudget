@@ -6,13 +6,13 @@ from colorama import Fore, Style
 
 class ExpensePlan:
     def __init__(self, filename):
-        self.filename = filename
-        self.cashflows = []
-        self.people = []
+        self.filename: str = filename
+        self.cashflows: list[dict] = []
+        self.people:list[str] = []
 
     def add_people(self):
         while True:
-            person_add = input("Enter a name to be added: ")
+            person_add: str = input("Enter a name to be added: ")
             if person_add:
                 self.people.append(person_add)
                 break
@@ -20,14 +20,14 @@ class ExpensePlan:
                 print("Cannot enter a blank name.")
 
     def remove_people(self):
-        person_remove = input("Enter a name to be removed: ")
+        person_remove: str = input("Enter a name to be removed: ")
         try:
             index = self.people.index(person_remove)
             self.people.pop(index)
         except ValueError:
             print("Name not found")
 
-    def people_management(self, people):
+    def people_management(self, people: list):
         while True:
             clear_screen()
             print("Current People")
@@ -41,7 +41,7 @@ class ExpensePlan:
                     self.add_people()  
                 case 'r':
                     if len(self.people) == 0:
-                        print("No people added")
+                        print("No people to remove.")
                         input("Press any key to continue.")
                     else:
                         self.remove_people()
@@ -49,7 +49,7 @@ class ExpensePlan:
                     break
 
     def print_cashflow(self):
-        printed_cashflow = copy.deepcopy(self.cashflows)
+        printed_cashflow:list[dict] = copy.deepcopy(self.cashflows)
         for each in printed_cashflow:
             if each['flow_type'] == 'Income':
                 each['amount'] = Fore.GREEN + '$' + str(each['amount']) + Style.RESET_ALL
@@ -148,8 +148,8 @@ class ExpensePlan:
             payee_data = payee_totals[payee]
             
             # Calculate A and B for this payee (Expenses only)
-            payee_a = payee_data['M'] / 2 + payee_data['A']
-            payee_b = payee_data['M'] / 2 + payee_data['B']
+            payee_a = payee_data['M'] / 2 + round(payee_data['A'], 2)
+            payee_b = payee_data['M'] / 2 + round(payee_data['B'], 2)
             
             # Calculate needed amounts
             needed_a = split_disposable_a + abs(payee_a)
@@ -340,7 +340,6 @@ class ExpensePlan:
                     input("Press any key to continue")
                 case '4':
                     clear_screen()
-                    # print('\nTotal cashflow: ', total_cashflow(cashflow))
                     self.total_cashflow()
                     input("Press any key to continue")
                 case 'q':

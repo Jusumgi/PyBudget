@@ -1,10 +1,8 @@
 import os
 import platform
-import webbrowser
-import json
 
 system = platform.system()
-def getchit():
+def getchit()-> str:
     """
     Allows for character input for faster UI experience, no matter which platform the script is run on.
     """
@@ -29,33 +27,11 @@ def clear_screen():
     else:
         print("Operating System not supported")
 
-def open_pdf(file_path):
-    if os.path.exists(file_path):
-        webbrowser.open_new(file_path)
-        print(f"Opened PDF: {file_path}")
-    else:
-        print(f"Error: PDF file not found at {file_path}")
-
-def saveFile(data, filename):
-    # If the folder isn't created yet, then create it.
-    folder_path = "save/"
-    if not os.path.exists(folder_path):
-        os.makedirs(folder_path)
-    with open(filename, 'w') as file:
-        json.dump(data, file, indent=4)
-
-def loadFile(filename):
-    try:
-        with open(filename, 'r') as file:
-            data = json.load(file)
-            return data
-    except FileNotFoundError:
-        return None
-def createFolder(folder_path):
+def createFolder(folder_path: str):
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
 
-def get_file_names(folder_path):
+def get_file_names(folder_path: str) -> list:
   """
     Returns a list of file names in the specified folder.
     

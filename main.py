@@ -3,7 +3,7 @@ from ExpensePlan import ExpensePlan
 import os
 import pickle
 
-folder_path = "saves/"
+folder_path: str = "saves/"
 
 if not os.path.exists(folder_path):
     os.makedirs(folder_path)
@@ -17,7 +17,7 @@ def main():
         choice = getchit()
         if choice == "s":
             filename = input("Enter a name for the new file: ")
-            loaded_cashflow = ExpensePlan(filename)
+            loaded_cashflow: ExpensePlan = ExpensePlan(filename)
             break
         elif choice == "l":
             files = get_file_names("saves/")
@@ -37,7 +37,7 @@ def main():
         else:
             print("Invalid input")
     while True:
-        # clear_screen()
+        clear_screen()
         print("Expense Tracker Main Menu")
         print("===========================")
         print("Current File: "+loaded_cashflow.filename)
@@ -50,23 +50,23 @@ def main():
         choice = getchit()
         match(choice):
             case "1":
-                # try:
+                try:
                     clear_screen()
                     loaded_cashflow.print_expenseplan()
                     getchit()
-                # except UnboundLocalError:
-                #     print("No cashflow loaded.")
-                #     getchit()
+                except UnboundLocalError:
+                    print("No cashflow loaded.")
+                    getchit()
             case "2":
-                # try:
+                try:
                     clear_screen()
                     loaded_cashflow.total_cashflow()
                     getchit()
-                # except KeyError:
-                #     print("No cashflow loaded.")
-                #     getchit()
+                except KeyError:
+                    print("No cashflow loaded.")
+                    getchit()
             case "3":
-                loaded_cashflow = loaded_cashflow.display_expense_plan_menu()
+                loaded_cashflow: ExpensePlan = loaded_cashflow.display_expense_plan_menu()
             case "4":
                 expenseplan_filename = input("Enter save name: ")
                 loaded_cashflow.filename = expenseplan_filename
@@ -84,11 +84,13 @@ def main():
                     print("File not found.")
                     input('Press any key to continue')
                 else:
-                    loaded_cashflow = loaded_file
+                    loaded_cashflow: ExpensePlan = loaded_file
                     clear_screen()
                     print("Loaded Expense Plan:")
                     loaded_cashflow.print_cashflow()
                     input('Press any key to continue')
             case "q":
                 break
-main()
+
+if __name__ == "__main__":
+    main()

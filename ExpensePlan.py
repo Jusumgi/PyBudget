@@ -58,6 +58,7 @@ class ExpensePlan:
         print(tabulate(printed_cashflow, headers='keys', disable_numparse=True, tablefmt='double_grid'))
 
     def print_expenseplan(self):
+        clear_screen()
         # Initialize dictionaries to store totals and track payperiods per flow_type
         totals = {}
         payperiods_by_flow = {'Income': set(), 'Expense': set()}
@@ -223,7 +224,7 @@ class ExpensePlan:
                 print(remaining_need)
                 print(f"  Remaining need of ${remaining_need:.2f} for {max_need_payee} could not be covered.")
     def total_cashflow(self):
-        
+        clear_screen()
         # Initialize dictionaries to store totals and track categories per flow_type
         totals = {}
         categories_by_flow = {'Income': set(), 'Expense': set()}

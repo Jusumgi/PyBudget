@@ -49,3 +49,34 @@ def get_file_names(folder_path: str) -> list:
     return f"Error: Folder not found at path: {folder_path}"
   except NotADirectoryError:
     return f"Error: Not a directory: {folder_path}"
+
+def initialize_expenseplan_menu():
+    from ExpensePlan import ExpensePlan
+    import pickle
+    clear_screen()
+    print("Welcome to Expense Tracker")
+    print("(S)tart Fresh or (L)oad?")
+    loaded_expense_plan = None
+    while True:
+        choice = getchit()
+        if choice == "s":
+            filename = input("Enter a name for the new file: ")
+            loaded_expense_plan: ExpensePlan = ExpensePlan(filename)
+            return loaded_expense_plan
+        elif choice == "l":
+            files = get_file_names("saves/")
+            print(files)
+            for each in files:
+                print(each)
+            while True:
+                file = input("Enter file name: ")
+                if file in files:
+                    with open("saves/"+file+".pkl", "rb") as f:
+                        loaded_expense_plan = pickle.load(f)
+                    print(loaded_expense_plan)
+                    return loaded_expense_plan
+                else:
+                    print(file+" does not exist. Please try again.")
+            break
+        else:
+            print("Invalid input")

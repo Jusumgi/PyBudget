@@ -5,6 +5,8 @@ class Cashflow:
     def __init__(self, expense_plan):
         self.id = str(uuid.uuid4())[:4]
         self.flow_type = determine_cashflow_type()
+        if self.flow_type == 'Cancel':
+            return
         self.amount = get_cashflow_amount(self.flow_type)
         self.category = determine_category(self.flow_type)
         self.description = input('Enter description: ')
@@ -45,6 +47,7 @@ def pay_date_select(flow_type, category):
         
 def determine_cashflow_type():
     print('Enter flow type (i)ncome/(e)xpense: ')
+    print('(c) to cancel')
     while True:
         flow_type: str = getchit().lower()
         match(flow_type):
@@ -52,6 +55,8 @@ def determine_cashflow_type():
                 return 'Income'
             case 'e':
                 return 'Expense'
+            case 'c':
+                return 'Cancel'
             case _:
                 print('Please input "i" for Income OR "e" for Expense')
 

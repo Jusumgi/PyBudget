@@ -308,7 +308,12 @@ class ExpensePlan:
             cfmgmt = getchit()
             match(cfmgmt):
                 case 'a':
-                    self.cashflows.append(Cashflow(self))
+                    added_cashflow = Cashflow(self)
+                    if added_cashflow.flow_type == 'Cancel':
+                        print("Cashflow addition cancelled.")
+                        input("Press any key to continue")
+                    else:
+                        self.cashflows.append(added_cashflow)
                 case 'r':
                     self.print_cashflow()
                     self.remove_cashflow()
@@ -321,6 +326,7 @@ class ExpensePlan:
         for index, item in enumerate(self.cashflows):
             each = item.__dict__ # Convert each Cashflow object to dict
             if each['id'] == id:
+                found = True
                 print(tabulate([each], headers='keys'))
                 print("Are you sure you want to remove? (y)es or (n)o")
                 while True:

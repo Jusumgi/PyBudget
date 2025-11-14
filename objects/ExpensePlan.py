@@ -49,10 +49,11 @@ class ExpensePlan:
                     break
 
     def print_cashflow(self):
-        buffer:list[dict] = copy.deepcopy(self.cashflows)
+        clear_screen()
+        buffer:list[object] = copy.deepcopy(self.cashflows)
         printed_cashflow = []
-        for cashflow_obj in buffer:
-            each = cashflow_obj.__dict__
+        for cashflow_obj in buffer: # Convert each Cashflow object to dict
+            each: dict = cashflow_obj.__dict__
             if each['flow_type'] == 'Income':
                 each['amount'] = Fore.GREEN + '$' + str(each['amount']) + Style.RESET_ALL
             else:
@@ -71,7 +72,7 @@ class ExpensePlan:
         
         # Calculate totals and group payperiods by flow_type
         for cashflow_obj in buffer:
-            each = cashflow_obj.__dict__
+            each = cashflow_obj.__dict__ # Convert each Cashflow object to dict
             flow_type = each['flow_type']
             payperiod = each['payperiod']
             amount = each['amount']
@@ -237,7 +238,7 @@ class ExpensePlan:
         
         # Calculate totals and group categories by flow_type
         for cashflow_obj in buffer:
-            each = cashflow_obj.__dict__
+            each = cashflow_obj.__dict__ # Convert each Cashflow object to dict
             flow_type = each['flow_type']
             category = each['category']
             amount = round(each['amount'], 2)
@@ -307,18 +308,18 @@ class ExpensePlan:
             cfmgmt = getchit()
             match(cfmgmt):
                 case 'a':
-                    # self.add_cashflow()
                     self.cashflows.append(Cashflow(self))
                 case 'r':
                     self.print_cashflow()
-                    id = input('Enter the ID of cashflow to be removed: ')
-                    self.remove_cashflow(id)
+                    self.remove_cashflow()
                 case 'b':
                     break
 
-    def remove_cashflow(self, id):
+    def remove_cashflow(self):
+        id = input('Enter the ID of cashflow to be removed: ')
+        found = False
         for index, item in enumerate(self.cashflows):
-            each = item.__dict__
+            each = item.__dict__ # Convert each Cashflow object to dict
             if each['id'] == id:
                 print(tabulate([each], headers='keys'))
                 print("Are you sure you want to remove? (y)es or (n)o")
@@ -335,7 +336,10 @@ class ExpensePlan:
                         break
                     else:
                         print("Please press y or n")
-        return -1
+                break        
+        if not found:
+            print(f"Cashflow with ID '{id}' not found.")
+            input("Press any key to continue")
     
     def display_expense_plan_menu(self):
         while True:
@@ -344,8 +348,8 @@ class ExpensePlan:
             print("===========================")
             print('(1) Cashflow Management')
             print('(2) People Management')
-            print('(3) List cashflow')
-            print('(4) Show total cashflow')
+            print('(3) List cashflows')
+            print('(4) Show total of cashflows')
             print('(q) Exit')
             print('--------------------------------')
             print('Select an option')

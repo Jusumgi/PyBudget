@@ -51,7 +51,7 @@ def get_file_names(folder_path: str) -> list:
     return f"Error: Not a directory: {folder_path}"
 
 def initialize_expenseplan_menu():
-    from ExpensePlan import ExpensePlan
+    from objects.ExpensePlan import ExpensePlan
     import pickle
     clear_screen()
     print("Welcome to Expense Tracker")

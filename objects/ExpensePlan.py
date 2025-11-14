@@ -290,7 +290,7 @@ class ExpensePlan:
         else:
             print("No data to display.")
 
-    def cashflow_management(self, cashflow):
+    def cashflow_management(self):
         while True:
             clear_screen()
             print("Current Cashflows")
@@ -300,14 +300,43 @@ class ExpensePlan:
             cfmgmt = getchit()
             match(cfmgmt):
                 case 'a':
-                    add_cashflow(cashflow)
+                    self.add_cashflow()
                 case 'r':
                     self.print_cashflow()
                     id = input('Enter the ID of cashflow to be removed: ')
-                    remove_cashflow(cashflow, id)
+                    self.remove_cashflow(id)
                 case 'b':
                     break
             
+    def add_cashflow(self):
+        flow_type: str = determine_cashflow_type()
+        amount: float = get_cashflow_amount(flow_type)
+        category: str = determine_category(flow_type)
+        description: str = input('Enter description: ')
+        payperiod: str = pay_date_select(flow_type, category)
+        payee: str = payee_select(self)
+        self.cashflows.append({'id': str(uuid.uuid4())[:4], 'category': category, 'description': description, 'amount': amount,  'payperiod': payperiod, 'payee': payee,'flow_type': flow_type})
+
+    def remove_cashflow(self, id):
+        for index, item in enumerate(self.cashflows):
+            if item['id'] == id:
+                print(tabulate([self.cashflows[index]], headers='keys'))
+                print("Are you sure you want to remove? (y)es or (n)o")
+                while True:
+                    confirmation = getchit()
+                    if confirmation == 'y':
+                        self.cashflows.pop(index)
+                        print('Cashflow removed')
+                        input("Press any key to continue")
+                        break
+                    elif confirmation == 'n' :
+                        print('Cashflow not removed.')
+                        input("Press any key to continue")
+                        break
+                    else:
+                        print("Please press y or n")
+        return -1
+    
     def display_expense_plan_menu(self):
         while True:
             clear_screen()
@@ -330,7 +359,7 @@ class ExpensePlan:
                             getchit()
                             break
                         else:
-                            self.cashflow_management(self)
+                            self.cashflow_management()
                             break 
                 case '2':
                     self.people_management(self.people)

@@ -77,6 +77,5 @@ def initialize_expenseplan_menu():
                     return loaded_expense_plan
                 else:
                     print(file+" does not exist. Please try again.")
-            break
         else:
             print("Invalid input")

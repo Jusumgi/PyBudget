@@ -24,19 +24,11 @@ def main():
         choice = getchit()
         match(choice):
             case "1":
-                try:
-                    loaded_expense_plan.print_expenseplan()
-                    getchit()
-                except UnboundLocalError:
-                    print("No cashflow loaded.")
-                    getchit()
+                loaded_expense_plan.print_expenseplan()
+                getchit()
             case "2":
-                try:
-                    loaded_expense_plan.total_cashflow()
-                    getchit()
-                except KeyError:
-                    print("No cashflow loaded.")
-                    getchit()
+                loaded_expense_plan.total_cashflow()
+                getchit()
             case "3":
                 loaded_expense_plan: ExpensePlan = loaded_expense_plan.display_expense_plan_menu()
             case "4":

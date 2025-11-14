@@ -13,11 +13,24 @@ class Cashflow:
         self.payperiod = pay_date_select(self.flow_type, self.category)
         self.payee = payee_select(expense_plan)
 
-def find_pay_period(day):
-    if 1 <= day <= 15 :
-        return "B"
-    else:
-        return "A" 
+def find_pay_period(day, expense_plan):
+    match expense_plan.payperiod_selector:
+        case "Monthly":
+            return "M"
+        case "Weekly":
+            if 1 <= day <= 7:
+                return "D"
+            elif 8 <= day <= 14:    
+                return "C"
+            elif 15 <= day <= 21:
+                return "B"
+            else:
+                return "A"
+        case "Biweekly":
+            if 1 <= day <= 15 :
+                return "B"
+            else:
+                return "A" 
 
 def payee_select(expense_plan):
     for each in expense_plan.people:
@@ -33,7 +46,7 @@ def pay_date_select(flow_type, category):
     while True:
         if flow_type == "Expense":
             try:
-                if category == 'Grocery':
+                if category == 'Grocery' or category == 'Other - Monthly':
                     return "M"
                 day = input('Enter day of month due (1-31): ')
                 if (1 <= int(day) <= 31):
@@ -58,7 +71,7 @@ def determine_cashflow_type():
             case 'c':
                 return 'Cancel'
             case _:
-                print('Please input "i" for Income OR "e" for Expense')
+                print('Please input "i" for Income OR "e" for Expense or "c" to cancel.')
 
 def get_cashflow_amount(flow_type):
     while True:

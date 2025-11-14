@@ -7,9 +7,26 @@ from objects.Cashflow import Cashflow
 class ExpensePlan:
     def __init__(self, filename):
         self.filename: str = filename
+        self.payperiod_selector: str = 'Biweekly'
         self.cashflows: list[dict] = []
         self.people:list[str] = []
 
+    def set_pay_period():
+        print('Set pay period for Expense Plan:')
+        print('(1) for Weekly')
+        print('(2) for Biweekly (Default)')
+        print('(3) for Monthly')
+        while True:
+            payperiod: str = getchit().lower()
+            match(payperiod):
+                case '1':
+                    return 'Weekly'
+                case '2':
+                    return 'Biweekly'
+                case '3':
+                    return 'Monthly'
+                case _:
+                    print('Please input "1", "2", or "3" to select pay period.')
     def add_people(self):
         while True:
             person_add: str = input("Enter a name to be added: ")

@@ -230,12 +230,14 @@ class ExpensePlan:
                 print(f"  Remaining need of ${remaining_need:.2f} for {max_need_payee} could not be covered.")
     def total_cashflow(self):
         clear_screen()
+        buffer = copy.deepcopy(self.cashflows)
         # Initialize dictionaries to store totals and track categories per flow_type
         totals = {}
         categories_by_flow = {'Income': set(), 'Expense': set()}
         
         # Calculate totals and group categories by flow_type
-        for each in self.cashflows:
+        for cashflow_obj in buffer:
+            each = cashflow_obj.__dict__
             flow_type = each['flow_type']
             category = each['category']
             amount = round(each['amount'], 2)

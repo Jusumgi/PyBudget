@@ -91,8 +91,6 @@ def determine_category(flow_type):
                     
                 case _:
                     print('Invalid Entry, please select from the provided categories.')
-                    pass
-            break
         else:
             print('(1) Bills')
             print('(2) Grocery')

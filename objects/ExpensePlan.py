@@ -1,8 +1,8 @@
 from tools import clear_screen, getchit
 import copy
-import tabulate
-from cashflowmgmt import *
+from tabulate import tabulate
 from colorama import Fore, Style
+from objects.Cashflow import Cashflow
 
 class ExpensePlan:
     def __init__(self, filename):
@@ -49,15 +49,21 @@ class ExpensePlan:
                     break
 
     def print_cashflow(self):
-        printed_cashflow:list[dict] = copy.deepcopy(self.cashflows)
-        for each in printed_cashflow:
+        clear_screen()
+        buffer:list[object] = copy.deepcopy(self.cashflows)
+        printed_cashflow = []
+        for cashflow_obj in buffer: # Convert each Cashflow object to dict
+            each: dict = cashflow_obj.__dict__
             if each['flow_type'] == 'Income':
                 each['amount'] = Fore.GREEN + '$' + str(each['amount']) + Style.RESET_ALL
             else:
                 each['amount'] = Fore.RED + '$' + str(each['amount']) + Style.RESET_ALL
+            printed_cashflow.append(each)
         print(tabulate(printed_cashflow, headers='keys', disable_numparse=True, tablefmt='double_grid'))
 
     def print_expenseplan(self):
+        clear_screen()
+        buffer:list[dict] = copy.deepcopy(self.cashflows)
         # Initialize dictionaries to store totals and track payperiods per flow_type
         totals = {}
         payperiods_by_flow = {'Income': set(), 'Expense': set()}
@@ -65,7 +71,8 @@ class ExpensePlan:
         payee_income = {}
         
         # Calculate totals and group payperiods by flow_type
-        for each in self.cashflows:
+        for cashflow_obj in buffer:
+            each = cashflow_obj.__dict__ # Convert each Cashflow object to dict
             flow_type = each['flow_type']
             payperiod = each['payperiod']
             amount = each['amount']
@@ -223,13 +230,15 @@ class ExpensePlan:
                 print(remaining_need)
                 print(f"  Remaining need of ${remaining_need:.2f} for {max_need_payee} could not be covered.")
     def total_cashflow(self):
-        
+        clear_screen()
+        buffer = copy.deepcopy(self.cashflows)
         # Initialize dictionaries to store totals and track categories per flow_type
         totals = {}
         categories_by_flow = {'Income': set(), 'Expense': set()}
         
         # Calculate totals and group categories by flow_type
-        for each in self.cashflows:
+        for cashflow_obj in buffer:
+            each = cashflow_obj.__dict__ # Convert each Cashflow object to dict
             flow_type = each['flow_type']
             category = each['category']
             amount = round(each['amount'], 2)
@@ -289,7 +298,7 @@ class ExpensePlan:
         else:
             print("No data to display.")
 
-    def cashflow_management(self, cashflow):
+    def cashflow_management(self):
         while True:
             clear_screen()
             print("Current Cashflows")
@@ -299,14 +308,39 @@ class ExpensePlan:
             cfmgmt = getchit()
             match(cfmgmt):
                 case 'a':
-                    add_cashflow(cashflow)
+                    self.cashflows.append(Cashflow(self))
                 case 'r':
                     self.print_cashflow()
-                    id = input('Enter the ID of cashflow to be removed: ')
-                    remove_cashflow(cashflow, id)
+                    self.remove_cashflow()
                 case 'b':
                     break
-            
+
+    def remove_cashflow(self):
+        id = input('Enter the ID of cashflow to be removed: ')
+        found = False
+        for index, item in enumerate(self.cashflows):
+            each = item.__dict__ # Convert each Cashflow object to dict
+            if each['id'] == id:
+                print(tabulate([each], headers='keys'))
+                print("Are you sure you want to remove? (y)es or (n)o")
+                while True:
+                    confirmation = getchit()
+                    if confirmation == 'y':
+                        self.cashflows.pop(index)
+                        print('Cashflow removed')
+                        input("Press any key to continue")
+                        break
+                    elif confirmation == 'n' :
+                        print('Cashflow not removed.')
+                        input("Press any key to continue")
+                        break
+                    else:
+                        print("Please press y or n")
+                break        
+        if not found:
+            print(f"Cashflow with ID '{id}' not found.")
+            input("Press any key to continue")
+    
     def display_expense_plan_menu(self):
         while True:
             clear_screen()
@@ -314,8 +348,8 @@ class ExpensePlan:
             print("===========================")
             print('(1) Cashflow Management')
             print('(2) People Management')
-            print('(3) List cashflow')
-            print('(4) Show total cashflow')
+            print('(3) List cashflows')
+            print('(4) Show total of cashflows')
             print('(q) Exit')
             print('--------------------------------')
             print('Select an option')
@@ -329,7 +363,7 @@ class ExpensePlan:
                             getchit()
                             break
                         else:
-                            self.cashflow_management(self)
+                            self.cashflow_management()
                             break 
                 case '2':
                     self.people_management(self.people)

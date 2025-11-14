@@ -1,7 +1,6 @@
 from tools import clear_screen, getchit
 import copy
-import tabulate
-from cashflowmgmt import *
+from tabulate import tabulate
 from colorama import Fore, Style
 from objects.Cashflow import Cashflow
 
@@ -63,6 +62,7 @@ class ExpensePlan:
 
     def print_expenseplan(self):
         clear_screen()
+        buffer:list[dict] = copy.deepcopy(self.cashflows)
         # Initialize dictionaries to store totals and track payperiods per flow_type
         totals = {}
         payperiods_by_flow = {'Income': set(), 'Expense': set()}
@@ -70,7 +70,8 @@ class ExpensePlan:
         payee_income = {}
         
         # Calculate totals and group payperiods by flow_type
-        for each in self.cashflows:
+        for cashflow_obj in buffer:
+            each = cashflow_obj.__dict__
             flow_type = each['flow_type']
             payperiod = each['payperiod']
             amount = each['amount']
@@ -312,21 +313,12 @@ class ExpensePlan:
                     self.remove_cashflow(id)
                 case 'b':
                     break
-            
-    def add_cashflow(self):
-        flow_type: str = determine_cashflow_type()
-        amount: float = get_cashflow_amount(flow_type)
-        category: str = determine_category(flow_type)
-        description: str = input('Enter description: ')
-        payperiod: str = pay_date_select(flow_type, category)
-        payee: str = payee_select(self)
-        self.cashflows.append({'id': str(uuid.uuid4())[:4], 'category': category, 'description': description, 'amount': amount,  'payperiod': payperiod, 'payee': payee,'flow_type': flow_type})
-        
 
     def remove_cashflow(self, id):
         for index, item in enumerate(self.cashflows):
-            if item['id'] == id:
-                print(tabulate([self.cashflows[index]], headers='keys'))
+            each = item.__dict__
+            if each['id'] == id:
+                print(tabulate([each], headers='keys'))
                 print("Are you sure you want to remove? (y)es or (n)o")
                 while True:
                     confirmation = getchit()

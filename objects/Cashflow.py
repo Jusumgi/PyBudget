@@ -4,12 +4,12 @@ from tools import getchit
 class Cashflow:
     def __init__(self, expense_plan):
         self.id = str(uuid.uuid4())[:4]
-        self.flow_type = self.determine_cashflow_type()
-        self.amount = self.get_cashflow_amount(self.flow_type)
-        self.category = self.determine_category(self.flow_type)
+        self.flow_type = determine_cashflow_type()
+        self.amount = get_cashflow_amount(self.flow_type)
+        self.category = determine_category(self.flow_type)
         self.description = input('Enter description: ')
-        self.payperiod = self.pay_date_select(self.flow_type, self.category)
-        self.payee = self.payee_select(expense_plan)
+        self.payperiod = pay_date_select(self.flow_type, self.category)
+        self.payee = payee_select(expense_plan)
 
 def find_pay_period(day):
     if 1 <= day <= 15 :
@@ -27,7 +27,7 @@ def payee_select(expense_plan):
         else:
             print("Please enter a name from existing people.")
 
-def pay_date_select(self, flow_type, category):
+def pay_date_select(flow_type, category):
     while True:
         if flow_type == "Expense":
             try:
@@ -35,7 +35,7 @@ def pay_date_select(self, flow_type, category):
                     return "M"
                 day = input('Enter day of month due (1-31): ')
                 if (1 <= int(day) <= 31):
-                    return self.find_pay_period(int(day))
+                    return find_pay_period(int(day))
                 else:
                     print("Please enter a number between 1 & 31")
             except ValueError:

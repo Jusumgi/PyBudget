@@ -3,6 +3,7 @@ import copy
 import tabulate
 from cashflowmgmt import *
 from colorama import Fore, Style
+from objects.Cashflow import Cashflow
 
 class ExpensePlan:
     def __init__(self, filename):
@@ -49,12 +50,15 @@ class ExpensePlan:
                     break
 
     def print_cashflow(self):
-        printed_cashflow:list[dict] = copy.deepcopy(self.cashflows)
-        for each in printed_cashflow:
+        buffer:list[dict] = copy.deepcopy(self.cashflows)
+        printed_cashflow = []
+        for cashflow_obj in buffer:
+            each = cashflow_obj.__dict__
             if each['flow_type'] == 'Income':
                 each['amount'] = Fore.GREEN + '$' + str(each['amount']) + Style.RESET_ALL
             else:
                 each['amount'] = Fore.RED + '$' + str(each['amount']) + Style.RESET_ALL
+            printed_cashflow.append(each)
         print(tabulate(printed_cashflow, headers='keys', disable_numparse=True, tablefmt='double_grid'))
 
     def print_expenseplan(self):
@@ -300,7 +304,8 @@ class ExpensePlan:
             cfmgmt = getchit()
             match(cfmgmt):
                 case 'a':
-                    self.add_cashflow()
+                    # self.add_cashflow()
+                    self.cashflows.append(Cashflow(self))
                 case 'r':
                     self.print_cashflow()
                     id = input('Enter the ID of cashflow to be removed: ')
@@ -316,6 +321,7 @@ class ExpensePlan:
         payperiod: str = pay_date_select(flow_type, category)
         payee: str = payee_select(self)
         self.cashflows.append({'id': str(uuid.uuid4())[:4], 'category': category, 'description': description, 'amount': amount,  'payperiod': payperiod, 'payee': payee,'flow_type': flow_type})
+        
 
     def remove_cashflow(self, id):
         for index, item in enumerate(self.cashflows):

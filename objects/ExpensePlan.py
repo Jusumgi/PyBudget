@@ -5,6 +5,7 @@ from colorama import Fore, Style
 from objects.Cashflow import Cashflow
 
 class ExpensePlan:
+    """ Represents an expense plan with cashflows and people involved. """
     def __init__(self, filename):
         self.filename: str = filename
         self.payperiod_selector: str = 'Biweekly'

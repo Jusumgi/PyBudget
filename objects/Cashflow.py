@@ -2,6 +2,7 @@ import uuid
 from tools import getchit
 
 class Cashflow:
+    """ Represents a cashflow entry in an expense plan. """
     def __init__(self, expense_plan):
         self.id = str(uuid.uuid4())[:4]
         self.flow_type = determine_cashflow_type()

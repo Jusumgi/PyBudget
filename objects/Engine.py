@@ -73,9 +73,7 @@ class Engine:
                 while True:
                     file = input("Enter file name: ")
                     if file in files:
-                        with open("saves/"+file+".pkl", "rb") as f:
-                            loaded_expense_plan = pickle.load(f)
-                        print(loaded_expense_plan)
+                        loaded_expense_plan = pickle_load("saves/"+file+".pkl")
                         return loaded_expense_plan
                     else:
                         print(file+" does not exist. Please try again.")

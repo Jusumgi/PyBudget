@@ -55,6 +55,7 @@ class Engine:
                     break
     
     def initialize_expenseplan_menu(self):
+        """ Initializes the expense plan by either creating a new one or loading an existing one. """
         clear_screen()
         print("Welcome to Expense Tracker")
         print("(S)tart Fresh or (L)oad?")

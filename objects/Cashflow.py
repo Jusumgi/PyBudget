@@ -15,6 +15,7 @@ class Cashflow:
         self.payee = payee_select(expense_plan)
 
 def find_pay_period(day, expense_plan):
+    """ Determines the pay period code based on the day and expense plan's pay period selector. """
     match expense_plan.payperiod_selector:
         case "Monthly":
             return "M"
@@ -34,6 +35,7 @@ def find_pay_period(day, expense_plan):
                 return "A" 
 
 def payee_select(expense_plan):
+    """ Prompts user to select a payee from existing people in the expense plan. """
     for each in expense_plan.people:
         print(each)
     while True:
@@ -44,6 +46,7 @@ def payee_select(expense_plan):
             print("Please enter a name from existing people.")
 
 def pay_date_select(flow_type, category):
+    """ Prompts user to select a pay date based on flow type and category. """
     while True:
         if flow_type == "Expense":
             try:
@@ -60,6 +63,7 @@ def pay_date_select(flow_type, category):
             return "I"
         
 def determine_cashflow_type():
+    """ Prompts user to determine if the cashflow is an income or expense. """
     print('Enter flow type (i)ncome/(e)xpense: ')
     print('(c) to cancel')
     while True:
@@ -75,6 +79,7 @@ def determine_cashflow_type():
                 print('Please input "i" for Income OR "e" for Expense or "c" to cancel.')
 
 def get_cashflow_amount(flow_type):
+    """ Prompts user to enter the cashflow amount. """
     while True:
         try:
             amount:float = float(input('Enter amount: '))
@@ -88,6 +93,7 @@ def get_cashflow_amount(flow_type):
         print('Invalid amount. Please enter a number.')
 
 def determine_category(flow_type):
+    """ Prompts user to determine the category of the cashflow based on its type. """
     while True:
         if flow_type == "Income":
             print('(1) Wages')

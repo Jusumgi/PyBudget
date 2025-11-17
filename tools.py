@@ -52,9 +52,11 @@ def get_file_names(folder_path: str) -> list:
     return f"Error: Not a directory: {folder_path}"
 
 def pickle_save(obj, filepath: str):
+    """ Saves an object to a file using pickle serialization. """
     with open(filepath, "wb") as file:
         pickle.dump(obj, file)
 def pickle_load(filepath: str):
+    """ Loads an object from a file using pickle serialization. """
     try:
         with open(filepath, "rb") as file:
             return pickle.load(file)

@@ -1,5 +1,4 @@
 from tools import *
-import pickle
 from objects.ExpensePlan import ExpensePlan 
 
 class Engine:

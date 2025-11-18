@@ -5,12 +5,31 @@ from colorama import Fore, Style
 from objects.Cashflow import Cashflow
 
 class ExpensePlan:
+    """ Represents an expense plan with cashflows and people involved. """
     def __init__(self, filename):
         self.filename: str = filename
+        self.payperiod_selector: str = 'Biweekly'
         self.cashflows: list[dict] = []
         self.people:list[str] = []
 
+    def set_pay_period():
+        print('Set pay period for Expense Plan:')
+        print('(1) for Weekly')
+        print('(2) for Biweekly (Default)')
+        print('(3) for Monthly')
+        while True:
+            payperiod: str = getchit().lower()
+            match(payperiod):
+                case '1':
+                    return 'Weekly'
+                case '2':
+                    return 'Biweekly'
+                case '3':
+                    return 'Monthly'
+                case _:
+                    print('Please input "1", "2", or "3" to select pay period.')
     def add_people(self):
+        """ Adds a person to the expense plan by name. """
         while True:
             person_add: str = input("Enter a name to be added: ")
             if person_add:
@@ -20,6 +39,7 @@ class ExpensePlan:
                 print("Cannot enter a blank name.")
 
     def remove_people(self):
+        """ Removes a person from the expense plan by name. """
         person_remove: str = input("Enter a name to be removed: ")
         try:
             index = self.people.index(person_remove)
@@ -28,6 +48,7 @@ class ExpensePlan:
             print("Name not found")
 
     def people_management(self, people: list):
+        """ Manages adding and removing people from the expense plan. """
         while True:
             clear_screen()
             print("Current People")
@@ -49,6 +70,7 @@ class ExpensePlan:
                     break
 
     def print_cashflow(self):
+        """ Prints the cashflows in a tabulated format with color coding for income and expenses. """
         clear_screen()
         buffer:list[object] = copy.deepcopy(self.cashflows)
         printed_cashflow = []
@@ -62,6 +84,7 @@ class ExpensePlan:
         print(tabulate(printed_cashflow, headers='keys', disable_numparse=True, tablefmt='double_grid'))
 
     def print_expenseplan(self):
+        """ Prints a summary of the expense plan including totals by type and payee assignments. """
         clear_screen()
         buffer:list[dict] = copy.deepcopy(self.cashflows)
         # Initialize dictionaries to store totals and track payperiods per flow_type
@@ -230,6 +253,7 @@ class ExpensePlan:
                 print(remaining_need)
                 print(f"  Remaining need of ${remaining_need:.2f} for {max_need_payee} could not be covered.")
     def total_cashflow(self):
+        """ Displays the total cashflow summary including income, expenses, and disposable income. """
         clear_screen()
         buffer = copy.deepcopy(self.cashflows)
         # Initialize dictionaries to store totals and track categories per flow_type
@@ -299,6 +323,7 @@ class ExpensePlan:
             print("No data to display.")
 
     def cashflow_management(self):
+        """ Manages adding and removing cashflows in the expense plan. """
         while True:
             clear_screen()
             print("Current Cashflows")
@@ -308,7 +333,12 @@ class ExpensePlan:
             cfmgmt = getchit()
             match(cfmgmt):
                 case 'a':
-                    self.cashflows.append(Cashflow(self))
+                    added_cashflow = Cashflow(self)
+                    if added_cashflow.flow_type == 'Cancel':
+                        print("Cashflow addition cancelled.")
+                        input("Press any key to continue")
+                    else:
+                        self.cashflows.append(added_cashflow)
                 case 'r':
                     self.print_cashflow()
                     self.remove_cashflow()
@@ -316,11 +346,13 @@ class ExpensePlan:
                     break
 
     def remove_cashflow(self):
+        """ Removes a cashflow from the expense plan by its ID. """
         id = input('Enter the ID of cashflow to be removed: ')
         found = False
         for index, item in enumerate(self.cashflows):
             each = item.__dict__ # Convert each Cashflow object to dict
             if each['id'] == id:
+                found = True
                 print(tabulate([each], headers='keys'))
                 print("Are you sure you want to remove? (y)es or (n)o")
                 while True:
@@ -342,6 +374,7 @@ class ExpensePlan:
             input("Press any key to continue")
     
     def display_expense_plan_menu(self):
+        """ Displays the expense plan menu for managing cashflows and people. """
         while True:
             clear_screen()
             print('Edit Expense Plan Menu')

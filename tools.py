@@ -1,5 +1,6 @@
 import os
 import platform
+import pickle
 
 system = platform.system()
 def getchit()-> str:
@@ -50,32 +51,15 @@ def get_file_names(folder_path: str) -> list:
   except NotADirectoryError:
     return f"Error: Not a directory: {folder_path}"
 
-def initialize_expenseplan_menu():
-    from objects.ExpensePlan import ExpensePlan
-    import pickle
-    clear_screen()
-    print("Welcome to Expense Tracker")
-    print("(S)tart Fresh or (L)oad?")
-    loaded_expense_plan = None
-    while True:
-        choice = getchit()
-        if choice == "s":
-            filename = input("Enter a name for the new file: ")
-            loaded_expense_plan: ExpensePlan = ExpensePlan(filename)
-            return loaded_expense_plan
-        elif choice == "l":
-            files = get_file_names("saves/")
-            print(files)
-            for each in files:
-                print(each)
-            while True:
-                file = input("Enter file name: ")
-                if file in files:
-                    with open("saves/"+file+".pkl", "rb") as f:
-                        loaded_expense_plan = pickle.load(f)
-                    print(loaded_expense_plan)
-                    return loaded_expense_plan
-                else:
-                    print(file+" does not exist. Please try again.")
-        else:
-            print("Invalid input")
+def pickle_save(obj, filepath: str):
+    """ Saves an object to a file using pickle serialization. """
+    with open(filepath, "wb") as file:
+        pickle.dump(obj, file)
+def pickle_load(filepath: str):
+    """ Loads an object from a file using pickle serialization. """
+    try:
+        with open(filepath, "rb") as file:
+            return pickle.load(file)
+    except FileNotFoundError:
+        print(f"Error: File not found at path: {filepath}")
+        return None

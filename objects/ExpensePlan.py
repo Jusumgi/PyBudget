@@ -3,6 +3,7 @@ import copy
 from tabulate import tabulate
 from colorama import Fore, Style
 from objects.Cashflow import Cashflow
+from objects.Person import Person
 
 class ExpensePlan:
     """ Represents an expense plan with cashflows and people involved. """
@@ -10,7 +11,7 @@ class ExpensePlan:
         self.filename: str = filename
         self.payperiod_selector: str = 'Biweekly'
         self.cashflows: list[dict] = []
-        self.people:list[str] = []
+        self.people:list[Person] = []
 
     def set_pay_period():
         print('Set pay period for Expense Plan:')
@@ -33,19 +34,38 @@ class ExpensePlan:
         while True:
             person_add: str = input("Enter a name to be added: ")
             if person_add:
-                self.people.append(person_add)
+                self.people.append(Person(person_add))
                 break
             else:
                 print("Cannot enter a blank name.")
 
     def remove_people(self):
-        """ Removes a person from the expense plan by name. """
-        person_remove: str = input("Enter a name to be removed: ")
-        try:
-            index = self.people.index(person_remove)
-            self.people.pop(index)
-        except ValueError:
-            print("Name not found")
+        """ Removes a person from program by name. """
+        name = input('Enter the name of cashflow to be removed: ')
+        found = False
+        for index, item in enumerate(self.people):
+            each = item.__dict__ # Convert each Person object to dict
+            if each['name'] == name:
+                found = True
+                print(each)
+                print("Are you sure you want to remove? (y)es or (n)o")
+                while True:
+                    confirmation = getchit()
+                    if confirmation == 'y':
+                        self.cashflows.pop(index)
+                        print('Person removed')
+                        input("Press any key to continue")
+                        break
+                    elif confirmation == 'n' :
+                        print('Person not removed.')
+                        input("Press any key to continue")
+                        break
+                    else:
+                        print("Please press y or n")
+                break        
+        if not found:
+            print(f"Person with name '{name}' not found.")
+            input("Press any key to continue")
 
     def people_management(self, people: list):
         """ Manages adding and removing people from the expense plan. """
@@ -53,7 +73,8 @@ class ExpensePlan:
             clear_screen()
             print("Current People")
             for each in people:
-                print(each)
+                each = each.__dict__
+                print(each['name'])
             print("(a)dd or (r)emove people?")
             print("Press b to go back")
             peepmgmt = getchit()

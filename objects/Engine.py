@@ -15,13 +15,13 @@ class Engine:
         self.active_person = None
 
     def run(self):
-        # self.current_expense_plan = self.initialize_expenseplan_menu()
         while True:
             clear_screen()
             print("Expense Tracker Main Menu")
             print("===========================")
             print("Current File: "+self.filename)
             print("Active Person: "+ (self.active_person if self.active_person else "None"))
+            print("Current Expense Plan: "+ (self.current_expense_plan.plan_name if self.current_expense_plan else "None"))
             print("===========================")
             print("(1) Manage People")
             print("(2) Manage your Cashflows")
@@ -45,12 +45,11 @@ class Engine:
                             if each['name'] == self.active_person:
                                 person.cashflow_management()
                 case "3":
-                    # self.current_expense_plan: ExpensePlan = self.current_expense_plan.display_expense_plan_menu()
                     if self.current_expense_plan is None:
-                        self.create_expense_plan()
-                    else:
+                        self.current_expense_plan = self.create_expense_plan()
                         self.current_expense_plan.people = self.people
                         self.current_expense_plan.accumulate_cashflows()
+                    else:
                         self.current_expense_plan = self.expense_plan_management()
                 case "4":
                     if self.active_person is None:
@@ -64,7 +63,7 @@ class Engine:
                     getchit()
                 case "5":
                     if self.current_expense_plan is None:
-                        self.create_expense_plan()
+                        self.current_expense_plan = self.create_expense_plan()
                         self.current_expense_plan.people = self.people
                         self.current_expense_plan.accumulate_cashflows()
                     else:
@@ -190,7 +189,7 @@ class Engine:
                 self.current_expense_plan = ExpensePlan(plan_name, self.people)
                 print(f"Expense Plan '{plan_name}' created and loaded.")
                 input("Press any key to continue.")
-                break
+                return self.current_expense_plan
             elif confirmation == 'n':
                 print("Returning to main menu.")
                 input("Press any key to continue.")
@@ -207,7 +206,7 @@ class Engine:
         while True:
             clear_screen()
             print(f"Expense Plan: {self.current_expense_plan.plan_name}")
-            print("(1) View Expense Plan")
+            print(f"(1) View Expense Plan")
             print(f"(2) Set Currency Symbol: {self.current_expense_plan.currency_symbol}")
             print(f"(3) Set Pay Period: {self.current_expense_plan.payperiod_selector}")
             print("(b) Back to Main Menu")

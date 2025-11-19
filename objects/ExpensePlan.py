@@ -21,20 +21,23 @@ class ExpensePlan:
         print(f"Currency symbol for {self.plan_name} updated to: {new_symbol}")
         input("Press any key to continue.")
 
-    def set_pay_period():
+    def set_pay_period(self):
         print('Set pay period for Expense Plan:')
         print('(1) for Weekly')
         print('(2) for Biweekly (Default)')
         print('(3) for Monthly')
         while True:
-            payperiod: str = getchit().lower()
+            payperiod = getchit().lower()
             match(payperiod):
                 case '1':
-                    return 'Weekly'
+                    self.payperiod_selector = 'Weekly'
+                    break
                 case '2':
-                    return 'Biweekly'
+                    self.payperiod_selector =  'Biweekly'
+                    break
                 case '3':
-                    return 'Monthly'
+                    self.payperiod_selector =  'Monthly'
+                    break
                 case _:
                     print('Please input "1", "2", or "3" to select pay period.')
 
@@ -137,7 +140,7 @@ class ExpensePlan:
     def print_expenseplan(self):
         """ Prints a summary of the expense plan including totals by type and payee assignments. """
         clear_screen()
-        buffer:list[dict] = copy.deepcopy(self.cashflows)
+        buffer:list[Cashflow] = copy.deepcopy(self.cashflows)
         # Initialize dictionaries to store totals and track payperiods per flow_type
         totals = {}
         payperiods_by_flow = {'Income': set(), 'Expense': set()}
@@ -164,21 +167,19 @@ class ExpensePlan:
             # Update payee totals for Expenses only
             if flow_type == 'Expense':
                 if payee not in payee_totals:
-                    payee_totals[payee] = {'total': 0, 'M': 0, 'A': 0, 'B': 0}
+                    payee_totals[payee] = {'total': 0, 'M': 0, 'A': 0, 'B': 0, 'C': 0, 'D': 0}
                 payee_totals[payee]['total'] += amount
                 payee_totals[payee][payperiod] += amount
-        
-        # Round totals for calculations
-        income = round(totals.get('Income', 0), 2)
-        half_income = round(totals.get('I', 0), 2) / 2
-        expense = round(totals.get('Expense', 0), 2)
-        monthly = round(totals.get('M', 0), 2)
-        a_expense = round(totals.get('A', 0), 2)
-        b_expense = round(totals.get('B', 0), 2)
-        
-        # Calculate Disposable income (Income - Expense)
+        # Round totals to 2 decimal places
+        for key in totals:
+            totals[key] = round(totals[key], 2)
+        income = totals.get('Income', 0)
+        expense = totals.get('Expense', 0)
+        monthly = totals.get('M', 0)
         disposable = round(income + expense, 2)
-        
+        half_income = totals.get('I', 0) / 2
+        a_expense = totals.get('A', 0)
+        b_expense = totals.get('B', 0)
         # Helper function to format values with color
         def format_value(value):
             return (
@@ -202,8 +203,8 @@ class ExpensePlan:
         
         # Split disposable by number of people
         people = self.people
-        split_disposable_a = disposable_a / len(people) if people else disposable_a
-        split_disposable_b = disposable_b / len(people) if people else disposable_b
+        split_disposable_a = disposable_a / len(people)
+        split_disposable_b = disposable_b / len(people)
         
         # Add formatted A and B values to rows
         income_row['A'] = format_value(half_income)

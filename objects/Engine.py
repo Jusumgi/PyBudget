@@ -47,24 +47,11 @@ class Engine:
                 case "3":
                     # self.current_expense_plan: ExpensePlan = self.current_expense_plan.display_expense_plan_menu()
                     if self.current_expense_plan is None:
-                        print("No expense plan loaded. Would you like to create one now? (y)es or (n)o")
-                        while True:
-                            confirmation = getchit()
-                            if confirmation == 'y':
-                                plan_name = input("Enter a name for the new expense plan: ")
-                                self.current_expense_plan = ExpensePlan(plan_name, self.people)
-                                print(f"Expense Plan '{plan_name}' created and loaded.")
-                                input("Press any key to continue.")
-                            elif confirmation == 'n':
-                                print("Returning to main menu.")
-                                input("Press any key to continue.")
-                                break
-                            else:
-                                print("Please press y or n")
+                        self.create_expense_plan()
                     else:
                         self.current_expense_plan.people = self.people
                         self.current_expense_plan.accumulate_cashflows()
-                        self.current_expense_plan = self.current_expense_plan.display_expense_plan_menu()
+                        self.current_expense_plan = self.expense_plan_management()
                 case "4":
                     if self.active_person is None:
                         print("No active person selected. Please set an active person first.")
@@ -76,8 +63,13 @@ class Engine:
                                 person.total_cashflow()
                     getchit()
                 case "5":
-                    self.current_expense_plan.print_expenseplan()
-                    getchit()
+                    if self.current_expense_plan is None:
+                        self.create_expense_plan()
+                        self.current_expense_plan.people = self.people
+                        self.current_expense_plan.accumulate_cashflows()
+                    else:
+                        self.current_expense_plan.print_expenseplan()
+                        getchit()
                 case "6":
                     save_file = input("Enter save name: ")
                     pickle_save(self, "saves/"+save_file+".pkl")
@@ -136,7 +128,8 @@ class Engine:
                 each = each.__dict__
                 print(each['name'])
             print(f"(1) Set Active Person : {self.active_person if self.active_person else 'None'}")
-            print("(2) Add/Remove Person")
+            print("(2) Set Currency Symbol for Active Person")
+            print("(3) Add/Remove Person")
             print("(b) Back to Main Menu")
             choice = getchit()
             match(choice):
@@ -153,6 +146,16 @@ class Engine:
                         print(f"Person with name '{name}' not found.")
                         input("Press any key to continue.")
                 case "2":
+                    if self.active_person is None:
+                        print("No active person selected. Please set an active person first.")
+                        input("Press any key to continue.")
+                    else:
+                        for person in self.people:
+                            each = person.__dict__
+                            if each['name'] == self.active_person:
+                                print(f"Current currency symbol for {self.active_person}: {each['currency_symbol']}")
+                                person.change_currency_symbol()
+                case "3":
                     self.add_remove_person()
                 case "b":
                     break
@@ -178,3 +181,44 @@ class Engine:
                         self.remove_people()
                 case 'b':
                     break
+    def create_expense_plan(self):
+        print("No expense plan loaded. Would you like to create one now? (y)es or (n)o")
+        while True:
+            confirmation = getchit()
+            if confirmation == 'y':
+                plan_name = input("Enter a name for the new expense plan: ")
+                self.current_expense_plan = ExpensePlan(plan_name, self.people)
+                print(f"Expense Plan '{plan_name}' created and loaded.")
+                input("Press any key to continue.")
+                break
+            elif confirmation == 'n':
+                print("Returning to main menu.")
+                input("Press any key to continue.")
+                break
+            else:
+                print("Please press y or n")
+    
+    def expense_plan_management(self):
+        """ Manages the current expense plan. """
+        if self.current_expense_plan is None:
+            print("No expense plan loaded. Please create or load an expense plan first.")
+            input("Press any key to continue.")
+            return
+        while True:
+            clear_screen()
+            print(f"Expense Plan: {self.current_expense_plan.plan_name}")
+            print("(1) View Expense Plan")
+            print(f"(2) Set Currency Symbol: {self.current_expense_plan.currency_symbol}")
+            print(f"(3) Set Pay Period: {self.current_expense_plan.payperiod_selector}")
+            print("(b) Back to Main Menu")
+            choice = getchit()
+            match(choice):
+                case "1":
+                    self.current_expense_plan.print_expenseplan()
+                    getchit()
+                case "2":
+                    self.current_expense_plan.change_currency_symbol()
+                case "3":
+                    self.current_expense_plan.set_pay_period()
+                case "b":
+                    return self.current_expense_plan

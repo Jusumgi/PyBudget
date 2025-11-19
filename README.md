@@ -12,3 +12,5 @@ CURRENT ISSUES/PLANS
 - FEATURE: Offer flexibility to Pay Periods - ability to select between Weekly(ABCD), Biweekly (A/B), or Monthly formatting when printing a plan out.
 - FEATURE: Offer a way to change currency symbol($, €, £, ¥, ₹, ₽) and delimiter (. or ,)
 - FEATURE: "Save Changes?" prompts
+- FEATURE: When expense plan is created, prompt to select each person who should be included in the expense plan.
+- FEATURE: Ability to create more than one expense plan, and be able to swap between them.

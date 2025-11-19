@@ -1,4 +1,4 @@
-from tools import clear_screen, getchit
+from tools import *
 import copy
 from tabulate import tabulate
 from colorama import Fore, Style
@@ -9,9 +9,17 @@ class ExpensePlan:
     """ Represents an expense plan with cashflows and people involved. """
     def __init__(self, plan_name, people: list[Person]):
         self.plan_name: str = plan_name
+        self.currency_symbol = currency_symbol_selection()
         self.payperiod_selector: str = 'Biweekly'
         self.people:list[Person] = people
         self.cashflows: list[dict] = self.accumulate_cashflows()
+
+    def change_currency_symbol(self):
+        """ Changes the currency symbol for the person. """
+        new_symbol = currency_symbol_selection()
+        self.currency_symbol = new_symbol
+        print(f"Currency symbol for {self.plan_name} updated to: {new_symbol}")
+        input("Press any key to continue.")
 
     def set_pay_period():
         print('Set pay period for Expense Plan:')
@@ -120,9 +128,9 @@ class ExpensePlan:
         for cashflow_obj in buffer: # Convert each Cashflow object to dict
             each: dict = cashflow_obj.__dict__
             if each['flow_type'] == 'Income':
-                each['amount'] = Fore.GREEN + '$' + str(each['amount']) + Style.RESET_ALL
+                each['amount'] = Fore.GREEN + self.currency_symbol + str(each['amount']) + Style.RESET_ALL
             else:
-                each['amount'] = Fore.RED + '$' + str(each['amount']) + Style.RESET_ALL
+                each['amount'] = Fore.RED + self.currency_symbol + str(each['amount']) + Style.RESET_ALL
             printed_cashflow.append(each)
         print(tabulate(printed_cashflow, headers='keys', disable_numparse=True, tablefmt='double_grid'))
 
@@ -174,8 +182,8 @@ class ExpensePlan:
         # Helper function to format values with color
         def format_value(value):
             return (
-                Fore.RED + '$' + str(value) + Style.RESET_ALL if value < 0
-                else Fore.GREEN + '$' + str(value) + Style.RESET_ALL
+                Fore.RED + self.currency_symbol + str(value) + Style.RESET_ALL if value < 0
+                else Fore.GREEN + self.currency_symbol + str(value) + Style.RESET_ALL
             )
         
         # Create separate dictionaries for Income, Expense, Disposable, and Disp. Split rows
@@ -263,10 +271,10 @@ class ExpensePlan:
             max_need_income_half = payee_income.get(max_need_payee, 0) / 2
             net_need = rounded_max_need - max_need_income_half
             if net_need <= 0:
-                print(f"For pay period {period}, {max_need_payee}'s need of ${rounded_max_need:.2f} is covered by their income of ${max_need_income_half:.2f}.")
+                print(f"For pay period {period}, {max_need_payee}'s need of {self.currency_symbol}{rounded_max_need:.2f} is covered by their income of {self.currency_symbol}{max_need_income_half:.2f}.")
                 continue
             
-            print(f"For pay period {period}, {max_need_payee} needs ${net_need:.2f} after their income of ${max_need_income_half:.2f}.")
+            print(f"For pay period {period}, {max_need_payee} needs {self.currency_symbol}{net_need:.2f} after their income of {self.currency_symbol}{max_need_income_half:.2f}.")
             
             # Calculate surplus for other payees: (income / 2) - Needed
             surplus_payees = []
@@ -290,11 +298,11 @@ class ExpensePlan:
                 # Calculate how much this payee should pay (proportional to their surplus)
                 contribution = min(surplus, remaining_need)
                 if contribution > 0.0:
-                    print(f"  {payee} should pay ${contribution:.2f} to {max_need_payee}.")
+                    print(f"  {payee} should pay {self.currency_symbol}{contribution:.2f} to {max_need_payee}.")
                     remaining_need -= round(contribution,2)
             if remaining_need > 0.0:
                 print(remaining_need)
-                print(f"  Remaining need of ${remaining_need:.2f} for {max_need_payee} could not be covered.")
+                print(f"  Remaining need of {self.currency_symbol}{remaining_need:.2f} for {max_need_payee} could not be covered.")
 
     def total_cashflow(self):
         """ Displays the total cashflow summary including income, expenses, and disposable income. """
@@ -459,9 +467,7 @@ class ExpensePlan:
     def accumulate_cashflows(self):
         """ Accumulates cashflows from all people into the expense plan's cashflows list. """
         self.cashflows = []  # Clear existing cashflows
-        print(self.people)
         for person in self.people:
             person_dict = person.__dict__
-            print(person_dict)
             for cashflow in person_dict['cashflows']:
                 self.cashflows.append(cashflow)

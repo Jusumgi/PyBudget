@@ -8,9 +8,17 @@ class Person:
     """ Represents a person involved in an expense plan. """
     def __init__(self, name: str):
         self.name = name
+        self.currency_symbol = currency_symbol_selection()
         self.cashflows = []
-        self.expense_plans = []
+        self.associated_expense_plans = []
 
+    def change_currency_symbol(self):
+        """ Changes the currency symbol for the person. """
+        new_symbol = currency_symbol_selection()
+        self.currency_symbol = new_symbol
+        print(f"Currency symbol for {self.name} updated to: {new_symbol}")
+        input("Press any key to continue.")
+        
     def cashflow_management(self):
         """ Manages adding and removing cashflows in the expense plan. """
         while True:
@@ -89,13 +97,13 @@ class Person:
 
         def format_value(value):
             return (
-                Fore.RED + '$' + str(value) + Style.RESET_ALL if value < 0
-                else Fore.GREEN + '$' + str(value) + Style.RESET_ALL
+                Fore.RED + self.currency_symbol + str(value) + Style.RESET_ALL if value < 0
+                else Fore.GREEN + self.currency_symbol + str(value) + Style.RESET_ALL
             )
         # Format Disposable with color
         disposable_formatted = (
-            Fore.RED + '$' + str(disposable) + Style.RESET_ALL if disposable < 0
-            else Fore.GREEN + '$' + str(disposable) + Style.RESET_ALL
+            Fore.RED + self.currency_symbol + str(disposable) + Style.RESET_ALL if disposable < 0
+            else Fore.GREEN + self.currency_symbol + str(disposable) + Style.RESET_ALL
         )
         # Create separate dictionaries for Income, Expense, and Disposable rows
         income_row = {'Type': 'Income'}
@@ -140,8 +148,8 @@ class Person:
         for cashflow_obj in buffer: # Convert each Cashflow object to dict
             each: dict = cashflow_obj.__dict__
             if each['flow_type'] == 'Income':
-                each['amount'] = Fore.GREEN + '$' + str(each['amount']) + Style.RESET_ALL
+                each['amount'] = Fore.GREEN + self.currency_symbol + str(each['amount']) + Style.RESET_ALL
             else:
-                each['amount'] = Fore.RED + '$' + str(each['amount']) + Style.RESET_ALL
+                each['amount'] = Fore.RED + self.currency_symbol + str(each['amount']) + Style.RESET_ALL
             printed_cashflow.append(each)
         print(tabulate(printed_cashflow, headers='keys', disable_numparse=True, tablefmt='double_grid'))

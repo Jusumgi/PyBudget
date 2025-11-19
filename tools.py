@@ -63,3 +63,24 @@ def pickle_load(filepath: str):
     except FileNotFoundError:
         print(f"Error: File not found at path: {filepath}")
         return None
+    
+def currency_symbol_selection():
+    """ Prompts user to select a currency symbol. """
+    symbols = {
+        '1': '$',  # US Dollar
+        '2': '€',  # Euro
+        '3': '£',  # British Pound
+        '4': '¥',  # Japanese Yen
+        '5': '₹',  # Indian Rupee
+        '6': '₽'   # Russian Ruble
+    }
+    print("Select a currency symbol:")
+    for key, symbol in symbols.items():
+        print(f"({key}) {symbol}")
+    
+    while True:
+        choice = getchit()
+        if choice in symbols:
+            return symbols[choice]
+        else:
+            print("Invalid choice. Please select a valid option.")

@@ -7,8 +7,8 @@ from objects.Person import Person
 
 class ExpensePlan:
     """ Represents an expense plan with cashflows and people involved. """
-    def __init__(self, filename, people: list[Person]):
-        self.filename: str = filename
+    def __init__(self, plan_name, people: list[Person]):
+        self.plan_name: str = plan_name
         self.payperiod_selector: str = 'Biweekly'
         self.people:list[Person] = people
         self.cashflows: list[dict] = self.accumulate_cashflows()
@@ -295,6 +295,7 @@ class ExpensePlan:
             if remaining_need > 0.0:
                 print(remaining_need)
                 print(f"  Remaining need of ${remaining_need:.2f} for {max_need_payee} could not be covered.")
+
     def total_cashflow(self):
         """ Displays the total cashflow summary including income, expenses, and disposable income. """
         clear_screen()
@@ -420,10 +421,12 @@ class ExpensePlan:
         """ Displays the expense plan menu for managing cashflows and people. """
         while True:
             clear_screen()
-            print('Edit Expense Plan Menu')
+            print('Configure Expense Plan Menu')
+            print("Expense Plan: "+self.plan_name)
             print("===========================")
-            print('(1) Cashflow Management')
-            print('(2) People Management')
+            print('(1) Set Pay Period : ' + self.payperiod_selector)
+            print('(2) Set Currency Symbol : $')
+            print('--------------------------------')
             print('(3) List cashflows')
             print('(4) Show total of cashflows')
             print('(q) Exit')
@@ -433,16 +436,10 @@ class ExpensePlan:
 
             match(choice):
                 case '1':
-                    while True:
-                        if not self.people:
-                            print("Please add people first.")
-                            getchit()
-                            break
-                        else:
-                            self.cashflow_management()
-                            break 
+                    print("This feature is not yet implemented.")
+                    getchit()
                 case '2':
-                    print(self.people)
+                    print("This feature is not yet implemented.")
                     getchit()
                 case '3':
                     clear_screen()

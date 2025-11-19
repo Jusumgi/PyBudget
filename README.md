@@ -10,5 +10,5 @@ CURRENT ISSUES/PLANS
 
 - BUG: When a person doesn't have any expenses of their own, they do not seem to appear in Expense Plan print-out
 - FEATURE: Offer flexibility to Pay Periods - ability to select between Weekly(ABCD), Biweekly (A/B), or Monthly formatting when printing a plan out.
-- FEATURE: Need a way for the Expense Plan to automatically convert pay periods of all cashflows when the pay period selector is changed.
-- FEATURE: Offer a way to change currency symbol
+- FEATURE: Offer a way to change currency symbol($, €, £, ¥, ₹, ₽) and delimiter (. or ,)
+- FEATURE: "Save Changes?" prompts

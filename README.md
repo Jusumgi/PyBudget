@@ -6,7 +6,8 @@ This is not financial advice.
 
 CURRENT ISSUES/PLANS
 
-- When a person doesn't have any expenses of their own, they do not seem to appear in Expense Plan print-out
-- Establish a People class and have Cashflows associated to People, rather than directly to the Expense Plan. Expense Plan should combine the Cashflows of People, respectfully.
-- Offer flexibility to Pay Periods - ability to select between Weekly(ABCD), Biweekly (A/B), or Monthly formatting when printing a plan out.
-- Need a way for the Expense Plan to automatically convert pay periods of all cashflows when the pay period selector is changed.
+- BUG: When a person doesn't have any expenses of their own, they do not seem to appear in Expense Plan print-out
+- FEATURE: Establish a People class and have Cashflows associated to People, rather than directly to the Expense Plan. Expense Plan should combine the Cashflows of People, respectfully.
+- FEATURE: Offer flexibility to Pay Periods - ability to select between Weekly(ABCD), Biweekly (A/B), or Monthly formatting when printing a plan out.
+- FEATURE: Need a way for the Expense Plan to automatically convert pay periods of all cashflows when the pay period selector is changed.
+- FEATURE: Offer a way to change currency symbol

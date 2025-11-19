@@ -7,33 +7,33 @@ class Engine:
     The main engine that runs the budgeting application.
     It manages people and their associated expense plans.
     """
-    def __init__(self):
+    def __init__(self, filename):
+        self.filename = filename
         self.people = []
         self.expense_plans = [] # may be used later
         self.current_expense_plan = None
         self.active_person = None
 
     def run(self):
-        self.current_expense_plan = self.initialize_expenseplan_menu()
+        # self.current_expense_plan = self.initialize_expenseplan_menu()
         while True:
             clear_screen()
             print("Expense Tracker Main Menu")
             print("===========================")
-            print("Current File: "+self.current_expense_plan.filename)
+            print("Current File: "+self.filename)
             print("Active Person: "+ (self.active_person if self.active_person else "None"))
             print("(1) Manage People")
             print("(2) Manage your Cashflows")
             print("(3) Manage Expense Plan")
             print("(4) View Total Cashflow of Expense Plan")
             print("(5) View Expense Plan")
-            print("(6) Save Expense Plan(deprecated)")
-            print("(7) Load Expense Plan(deprecated)")
+            print("(6) Save File")
+            print("(7) Load File")
             print("(q) Exit")
             choice = getchit()
             match(choice):
                 case "1":
                     self.people_management(self.people)
-                    pickle_save(self.people, "saves/people.pkl")
                 case "2":
                     if self.active_person is None:
                         print("No active person selected. Please set an active person first.")
@@ -44,58 +44,60 @@ class Engine:
                             if each['name'] == self.active_person:
                                 person.cashflow_management()
                 case "3":
-                    self.current_expense_plan: ExpensePlan = self.current_expense_plan.display_expense_plan_menu()
+                    # self.current_expense_plan: ExpensePlan = self.current_expense_plan.display_expense_plan_menu()
+                    pass
                 case "4":
-                    self.current_expense_plan.total_cashflow()
+                    # self.current_expense_plan.total_cashflow()
+                    print("Feature not yet implemented.")
                     getchit()
                 case "5":
-                    self.current_expense_plan.print_expenseplan()
+                    # self.current_expense_plan.print_expenseplan()
+                    print("Feature not yet implemented.")
                     getchit()
                 case "6":
-                    expenseplan_filename = input("Enter save name: ")
-                    self.current_expense_plan.filename = expenseplan_filename
-                    pickle_save(self.current_expense_plan, "saves/"+expenseplan_filename+".pkl")
+                    save_file = input("Enter save name: ")
+                    pickle_save(self, "saves/"+save_file+".pkl")
                 case "7":
                     print(get_file_names("saves/"))
-                    expenseplan_filename = input("Enter file name: ")
-                    self.current_expense_plan = pickle_load("saves/"+expenseplan_filename+".pkl")
+                    save_file = input("Enter file name: ")
+                    self = pickle_load("saves/"+save_file+".pkl")
                     if self.current_expense_plan == None:
                         input('Press any key to continue')
                     else:
-                        self.current_expense_plan: ExpensePlan = self.current_expense_plan
+                        self: Engine = self
                         clear_screen()
-                        print("Loaded Expense Plan:")
-                        self.current_expense_plan.print_cashflow()
+                        # print("Loaded Expense Plan:")
+                        # self.current_expense_plan.print_cashflow()
                         input('Press any key to continue')
                 case "q":
                     break
     
-    def initialize_expenseplan_menu(self):
-        """ Initializes the expense plan by either creating a new one or loading an existing one. """
-        clear_screen()
-        print("Welcome to Expense Tracker")
-        print("(S)tart Fresh or (L)oad?")
-        loaded_expense_plan = None
-        while True:
-            choice = getchit()
-            if choice == "s":
-                filename = input("Enter a name for the new file: ")
-                loaded_expense_plan: ExpensePlan = ExpensePlan(filename)
-                return loaded_expense_plan
-            elif choice == "l":
-                files = get_file_names("saves/")
-                print(files)
-                for each in files:
-                    print(each)
-                while True:
-                    file = input("Enter file name: ")
-                    if file in files:
-                        loaded_expense_plan = pickle_load("saves/"+file+".pkl")
-                        return loaded_expense_plan
-                    else:
-                        print(file+" does not exist. Please try again.")
-            else:
-                print("Invalid input")
+    # def initialize_expenseplan_menu(self):
+    #     """ Initializes the expense plan by either creating a new one or loading an existing one. """
+    #     clear_screen()
+    #     print("Welcome to Expense Tracker")
+    #     print("(S)tart Fresh or (L)oad?")
+    #     loaded_expense_plan = None
+    #     while True:
+    #         choice = getchit()
+    #         if choice == "s":
+    #             filename = input("Enter a name for the new file: ")
+    #             loaded_expense_plan: ExpensePlan = ExpensePlan(filename)
+    #             return loaded_expense_plan
+    #         elif choice == "l":
+    #             files = get_file_names("saves/")
+    #             print(files)
+    #             for each in files:
+    #                 print(each)
+    #             while True:
+    #                 file = input("Enter file name: ")
+    #                 if file in files:
+    #                     loaded_expense_plan = pickle_load("saves/"+file+".pkl")
+    #                     return loaded_expense_plan
+    #                 else:
+    #                     print(file+" does not exist. Please try again.")
+    #         else:
+    #             print("Invalid input")
 
     def add_people(self):
         """ Adds a person to the expense plan by name. """

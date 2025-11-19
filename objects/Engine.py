@@ -45,14 +45,30 @@ class Engine:
                                 person.cashflow_management()
                 case "3":
                     # self.current_expense_plan: ExpensePlan = self.current_expense_plan.display_expense_plan_menu()
-                    pass
+                    if self.current_expense_plan is None:
+                        print("No expense plan loaded. Would you like to create one now? (y)es or (n)o")
+                        while True:
+                            confirmation = getchit()
+                            if confirmation == 'y':
+                                plan_name = input("Enter a name for the new expense plan: ")
+                                self.current_expense_plan = ExpensePlan(plan_name, self.people)
+                                print(f"Expense Plan '{plan_name}' created and loaded.")
+                                input("Press any key to continue.")
+                            elif confirmation == 'n':
+                                print("Returning to main menu.")
+                                input("Press any key to continue.")
+                                break
+                            else:
+                                print("Please press y or n")
+                    else:
+                        self.current_expense_plan.people = self.people
+                        self.current_expense_plan.accumulate_cashflows()
+                        self.current_expense_plan = self.current_expense_plan.display_expense_plan_menu()
                 case "4":
-                    # self.current_expense_plan.total_cashflow()
-                    print("Feature not yet implemented.")
+                    self.current_expense_plan.total_cashflow()
                     getchit()
                 case "5":
-                    # self.current_expense_plan.print_expenseplan()
-                    print("Feature not yet implemented.")
+                    self.current_expense_plan.print_expenseplan()
                     getchit()
                 case "6":
                     save_file = input("Enter save name: ")
@@ -100,7 +116,7 @@ class Engine:
     #             print("Invalid input")
 
     def add_people(self):
-        """ Adds a person to the expense plan by name. """
+        """ Adds a person to the program by name. """
         while True:
             person_add: str = input("Enter a name to be added: ")
             if person_add:

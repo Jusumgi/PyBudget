@@ -7,11 +7,11 @@ from objects.Person import Person
 
 class ExpensePlan:
     """ Represents an expense plan with cashflows and people involved. """
-    def __init__(self, filename):
+    def __init__(self, filename, people: list[Person]):
         self.filename: str = filename
         self.payperiod_selector: str = 'Biweekly'
-        self.cashflows: list[dict] = []
-        self.people:list[Person] = []
+        self.people:list[Person] = people
+        self.cashflows: list[dict] = self.accumulate_cashflows()
 
     def set_pay_period():
         print('Set pay period for Expense Plan:')
@@ -29,8 +29,30 @@ class ExpensePlan:
                     return 'Monthly'
                 case _:
                     print('Please input "1", "2", or "3" to select pay period.')
+
+    def find_pay_period(self, day): #may not be needed in this object, but here for now
+        """ Determines the pay period code based on the day and expense plan's pay period selector. """
+        if day == "I":
+            return "I"
+        match self.payperiod_selector:
+            case "Monthly":
+                return "M"
+            case "Weekly":
+                if 1 <= day <= 7:
+                    return "D"
+                elif 8 <= day <= 14:    
+                    return "C"
+                elif 15 <= day <= 21:
+                    return "B"
+                else:
+                    return "A"
+            case "Biweekly":
+                if 1 <= day <= 15 :
+                    return "B"
+                else:
+                    return "A" 
     def add_people(self):
-        """ Adds a person to the expense plan by name. """
+        """ Adds a person from file to the expense plan by name. """
         while True:
             person_add: str = input("Enter a name to be added: ")
             if person_add:
@@ -118,7 +140,7 @@ class ExpensePlan:
         for cashflow_obj in buffer:
             each = cashflow_obj.__dict__ # Convert each Cashflow object to dict
             flow_type = each['flow_type']
-            payperiod = each['payperiod']
+            payperiod = self.find_pay_period(each['payperiod'])
             amount = each['amount']
             payee = each['payee']
             
@@ -420,7 +442,8 @@ class ExpensePlan:
                             self.cashflow_management()
                             break 
                 case '2':
-                    self.people_management(self.people)
+                    print(self.people)
+                    getchit()
                 case '3':
                     clear_screen()
                     print('\nAll cashflow:')
@@ -436,3 +459,12 @@ class ExpensePlan:
                     except UnboundLocalError:
                         print("Return failed")
                         break
+    def accumulate_cashflows(self):
+        """ Accumulates cashflows from all people into the expense plan's cashflows list. """
+        self.cashflows = []  # Clear existing cashflows
+        print(self.people)
+        for person in self.people:
+            person_dict = person.__dict__
+            print(person_dict)
+            for cashflow in person_dict['cashflows']:
+                self.cashflows.append(cashflow)

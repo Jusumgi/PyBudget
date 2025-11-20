@@ -44,11 +44,11 @@ class ExpensePlan:
         match self.payperiod_selector:
             case "Weekly":
                 if 1 <= day <= 7:
-                    return "D"
+                    return "B"
                 elif 8 <= day <= 14:    
                     return "C"
                 elif 15 <= day <= 21:
-                    return "B"
+                    return "D"
                 else:
                     return "A"
             case "Biweekly":

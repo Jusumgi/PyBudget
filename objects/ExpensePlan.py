@@ -25,7 +25,6 @@ class ExpensePlan:
         print('Set pay period for Expense Plan:')
         print('(1) for Weekly')
         print('(2) for Biweekly (Default)')
-        print('(3) for Monthly')
         while True:
             payperiod = getchit().lower()
             match(payperiod):
@@ -35,19 +34,14 @@ class ExpensePlan:
                 case '2':
                     self.payperiod_selector =  'Biweekly'
                     break
-                case '3':
-                    self.payperiod_selector =  'Monthly'
-                    break
                 case _:
-                    print('Please input "1", "2", or "3" to select pay period.')
+                    print('Please input "1" or "2" to select pay period.')
 
     def find_pay_period(self, day): #may not be needed in this object, but here for now
         """ Determines the pay period code based on the day and expense plan's pay period selector. """
         if day == "I":
             return "I"
         match self.payperiod_selector:
-            case "Monthly":
-                return "M"
             case "Weekly":
                 if 1 <= day <= 7:
                     return "D"
@@ -178,8 +172,11 @@ class ExpensePlan:
         monthly = totals.get('M', 0)
         disposable = round(income + expense, 2)
         half_income = totals.get('I', 0) / 2
+        quarter_income = totals.get('I', 0) / 4
         a_expense = totals.get('A', 0)
         b_expense = totals.get('B', 0)
+        c_expense = totals.get('C', 0)
+        d_expense = totals.get('D', 0)
         # Helper function to format values with color
         def format_value(value):
             return (
@@ -194,27 +191,41 @@ class ExpensePlan:
         each_row = {'Type': 'Disp. Split'}
         
         # Expense: Split payperiod M evenly between A and B, add direct A and B expenses
-        expense_a = monthly / 2 + a_expense
-        expense_b = monthly / 2 + b_expense
+        expense_a = monthly / 2 + a_expense if self.payperiod_selector == 'Biweekly' else monthly / 4 + a_expense
+        expense_b = monthly / 2 + b_expense if self.payperiod_selector == 'Biweekly' else monthly / 4 + b_expense
+        expense_c = monthly / 4 + c_expense  # Not used in A/B split
+        expense_d = d_expense / 4 + d_expense # Not used in A/B split
         
         # Disposable: Difference between Income and Expense for A and B
-        disposable_a = round(half_income + expense_a, 2)
-        disposable_b = round(half_income + expense_b, 2)
+        disposable_a = round(half_income + expense_a, 2) if self.payperiod_selector == 'Biweekly' else round(quarter_income + expense_a, 2)
+        disposable_b = round(half_income + expense_b, 2) if self.payperiod_selector == 'Biweekly' else round(quarter_income + expense_b, 2)
+        disposable_c = round(quarter_income + expense_c, 2)  # Not used in A/B split
+        disposable_d = round(quarter_income + expense_d, 2)  # Not used in A/B split
         
         # Split disposable by number of people
         people = self.people
         split_disposable_a = disposable_a / len(people)
         split_disposable_b = disposable_b / len(people)
+        split_disposable_c = disposable_c / len(people)  # Not used in A/B split
+        split_disposable_d = disposable_d / len(people)  # Not used in A/B split
         
         # Add formatted A and B values to rows
-        income_row['A'] = format_value(half_income)
-        income_row['B'] = format_value(half_income)
+        income_row['A'] = format_value(half_income) if self.payperiod_selector == 'Biweekly' else format_value(quarter_income) 
+        income_row['B'] = format_value(half_income) if self.payperiod_selector == 'Biweekly' else format_value(quarter_income) 
+        income_row['C'] = format_value(quarter_income)
+        income_row['D'] = format_value(quarter_income)
         expense_row['A'] = format_value(round(expense_a,2))
         expense_row['B'] = format_value(round(expense_b,2))
+        expense_row['C'] = format_value(round(expense_c,2))
+        expense_row['D'] = format_value(round(expense_d,2))
         disposable_row['A'] = format_value(disposable_a)
         disposable_row['B'] = format_value(disposable_b)
+        disposable_row['C'] = format_value(disposable_c)
+        disposable_row['D'] = format_value(disposable_d)
         each_row['A'] = format_value(round(split_disposable_a, 2))
         each_row['B'] = format_value(round(split_disposable_b, 2))
+        each_row['C'] = format_value(round(split_disposable_c, 2))
+        each_row['D'] = format_value(round(split_disposable_d, 2))
         
         # Collect rows for Type table
         rows = [income_row, expense_row, disposable_row, each_row]
@@ -232,13 +243,17 @@ class ExpensePlan:
             # Calculate A and B for this payee (Expenses only)
             payee_a = payee_data['M'] / 2 + round(payee_data['A'], 2)
             payee_b = payee_data['M'] / 2 + round(payee_data['B'], 2)
+            payee_c = payee_data['M'] / 4 + round(payee_data['C'], 2)  # Not used in A/B split
+            payee_d = payee_data['M'] / 4 + round(payee_data['D'], 2)  # Not used in A/B split
             
             # Calculate needed amounts
             needed_a = split_disposable_a + abs(payee_a)
             needed_b = split_disposable_b + abs(payee_b)
+            needed_c = split_disposable_c + abs(payee_c)  # Not used in A/B split
+            needed_d = split_disposable_d + abs(payee_d)  # Not used in A/B split
             
             # Store for payment calculations
-            payee_needs[payee] = {'A': needed_a, 'B': needed_b}
+            payee_needs[payee] = {'A': needed_a, 'B': needed_b, 'C': needed_c, 'D': needed_d}
             
             # Create row dictionary
             payee_row = {
@@ -246,8 +261,12 @@ class ExpensePlan:
                 'Total': format_value(payee_data['total']),
                 'A Expenses': format_value(payee_a),
                 'B Expenses': format_value(payee_b),
+                'C Expenses': format_value(payee_c),
+                'D Expenses': format_value(payee_d),
                 'A Needs': format_value(round(needed_a, 2)),
-                'B Needs': format_value(round(needed_b, 2))
+                'B Needs': format_value(round(needed_b, 2)),
+                'C Needs': format_value(round(needed_c, 2)),
+                'D Needs': format_value(round(needed_d, 2))
             }
             payee_rows.append(payee_row)
         
@@ -256,8 +275,10 @@ class ExpensePlan:
         print(tabulate(payee_rows, headers='keys', tablefmt='double_grid'))
         
         # Determine payments based on greatest need for each pay period
+
+        payperiods = ['A', 'B'] if self.payperiod_selector == 'Biweekly' else ['A', 'B', 'C', 'D']
         print("\nPayment Assignments:")
-        for period in ['A', 'B']:
+        for period in payperiods:
             # Find payee with greatest need (highest positive Needed value)
             needs = [(payee, data[period]) for payee, data in payee_needs.items()]
             needs.sort(key=lambda x: x[1], reverse=True)  # Sort by need descending
@@ -269,13 +290,13 @@ class ExpensePlan:
             max_need_payee, max_need = needs[0]
             rounded_max_need = round(max_need,2)
             # Adjust need by the payee's own income
-            max_need_income_half = payee_income.get(max_need_payee, 0) / 2
-            net_need = rounded_max_need - max_need_income_half
+            max_need_income_split = payee_income.get(max_need_payee, 0) / 2 if self.payperiod_selector == 'Biweekly' else payee_income.get(max_need_payee, 0) / 4
+            net_need = rounded_max_need - max_need_income_split
             if net_need <= 0:
-                print(f"For pay period {period}, {max_need_payee}'s need of {self.currency_symbol}{rounded_max_need:.2f} is covered by their income of {self.currency_symbol}{max_need_income_half:.2f}.")
+                print(f"For pay period {period}, {max_need_payee}'s need of {self.currency_symbol}{rounded_max_need:.2f} is covered by their income of {self.currency_symbol}{max_need_income_split:.2f}.")
                 continue
             
-            print(f"For pay period {period}, {max_need_payee} needs {self.currency_symbol}{net_need:.2f} after their income of {self.currency_symbol}{max_need_income_half:.2f}.")
+            print(f"For pay period {period}, {max_need_payee} needs {self.currency_symbol}{net_need:.2f} after their income of {self.currency_symbol}{max_need_income_split:.2f}.")
             
             # Calculate surplus for other payees: (income / 2) - Needed
             surplus_payees = []
@@ -283,7 +304,8 @@ class ExpensePlan:
                 if payee == max_need_payee:
                     continue
                 income_half = payee_income.get(payee, 0) / 2
-                surplus = income_half - need
+                income_quarter = payee_income.get(payee, 0) / 4
+                surplus = income_half - need if self.payperiod_selector == 'Biweekly' else income_quarter - need
                 if surplus > 0:
                     surplus_payees.append((payee, surplus))
             
@@ -294,14 +316,14 @@ class ExpensePlan:
             # Distribute the net need among surplus payees
             remaining_need = net_need
             for payee, surplus in sorted(surplus_payees, key=lambda x: x[1], reverse=True):  # Sort by surplus descending
-                if remaining_need <= 0.0:
+                if remaining_need <= 0.00:
                     break
                 # Calculate how much this payee should pay (proportional to their surplus)
                 contribution = min(surplus, remaining_need)
-                if contribution > 0.0:
+                if contribution > 0.00:
                     print(f"  {payee} should pay {self.currency_symbol}{contribution:.2f} to {max_need_payee}.")
                     remaining_need -= round(contribution,2)
-            if remaining_need > 0.0:
+            if round(remaining_need, 2) > 0.00:
                 print(remaining_need)
                 print(f"  Remaining need of {self.currency_symbol}{remaining_need:.2f} for {max_need_payee} could not be covered.")
 

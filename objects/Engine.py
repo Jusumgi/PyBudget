@@ -189,9 +189,9 @@ class Engine:
         for each in self.people:
             each = each.__dict__
             print(each['name'])
-        print("Select people to include in the expense plan (type 'done' when finished):")
+        print("Select people to include in the expense plan:")
         while True:
-            name = input("Enter person's name: ")
+            name = input("Enter person's name or 'done' when finished: ")
             for index, item in enumerate(self.people):
                 each = item.__dict__ # Convert each Person object to dict
                 if each['name'] == name:
@@ -218,7 +218,7 @@ class Engine:
                 break
             else:
                 print("Please press y or n")
-                
+
     def delete_expense_plan(self):
         """ Deletes the current expense plan. """
         if self.current_expense_plan is None:

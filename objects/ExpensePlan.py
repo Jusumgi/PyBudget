@@ -194,7 +194,7 @@ class ExpensePlan:
         expense_a = monthly / 2 + a_expense if self.payperiod_selector == 'Biweekly' else monthly / 4 + a_expense
         expense_b = monthly / 2 + b_expense if self.payperiod_selector == 'Biweekly' else monthly / 4 + b_expense
         expense_c = monthly / 4 + c_expense  # Not used in A/B split
-        expense_d = d_expense / 4 + d_expense # Not used in A/B split
+        expense_d = monthly / 4 + d_expense # Not used in A/B split
         
         # Disposable: Difference between Income and Expense for A and B
         disposable_a = round(half_income + expense_a, 2) if self.payperiod_selector == 'Biweekly' else round(quarter_income + expense_a, 2)
@@ -212,21 +212,38 @@ class ExpensePlan:
         # Add formatted A and B values to rows
         income_row['A'] = format_value(half_income) if self.payperiod_selector == 'Biweekly' else format_value(quarter_income) 
         income_row['B'] = format_value(half_income) if self.payperiod_selector == 'Biweekly' else format_value(quarter_income) 
-        income_row['C'] = format_value(quarter_income)
-        income_row['D'] = format_value(quarter_income)
         expense_row['A'] = format_value(round(expense_a,2))
         expense_row['B'] = format_value(round(expense_b,2))
-        expense_row['C'] = format_value(round(expense_c,2))
-        expense_row['D'] = format_value(round(expense_d,2))
         disposable_row['A'] = format_value(disposable_a)
         disposable_row['B'] = format_value(disposable_b)
-        disposable_row['C'] = format_value(disposable_c)
-        disposable_row['D'] = format_value(disposable_d)
         each_row['A'] = format_value(round(split_disposable_a, 2))
         each_row['B'] = format_value(round(split_disposable_b, 2))
-        each_row['C'] = format_value(round(split_disposable_c, 2))
-        each_row['D'] = format_value(round(split_disposable_d, 2))
-        
+        if self.payperiod_selector == 'Weekly':
+            # Include C and D columns for Weekly payperiods
+            income_row['C'] = format_value(quarter_income)
+            income_row['D'] = format_value(quarter_income)
+            expense_row['C'] = format_value(round(expense_c,2))
+            expense_row['D'] = format_value(round(expense_d,2))
+            disposable_row['C'] = format_value(disposable_c)
+            disposable_row['D'] = format_value(disposable_d)
+            each_row['C'] = format_value(round(split_disposable_c, 2))
+            each_row['D'] = format_value(round(split_disposable_d, 2))
+        # Determine payperiods to display based on payperiod_selector
+        payperiods = ['A', 'B'] if self.payperiod_selector == 'Biweekly' else ['A', 'B', 'C', 'D']
+        if self.payperiod_selector == 'Biweekly':
+            income_map = {'A': half_income, 'B': half_income}
+        else:
+            income_map = {p: quarter_income for p in ['A', 'B', 'C', 'D']}
+
+        expense_map = {'A': expense_a, 'B': expense_b} if self.payperiod_selector == 'Biweekly' else {'A': expense_a, 'B': expense_b, 'C': expense_c, 'D': expense_d}
+        disposable_map = {'A': disposable_a, 'B': disposable_b} if self.payperiod_selector == 'Biweekly' else {'A': disposable_a, 'B': disposable_b, 'C': disposable_c, 'D': disposable_d}
+        each_map = {'A': split_disposable_a, 'B': split_disposable_b} if self.payperiod_selector == 'Biweekly' else {'A': split_disposable_a, 'B': split_disposable_b, 'C': split_disposable_c, 'D': split_disposable_d}
+
+        for p in payperiods:
+            income_row[p] = format_value(round(income_map[p], 2))
+            expense_row[p] = format_value(round(expense_map[p], 2))
+            disposable_row[p] = format_value(round(disposable_map[p], 2))
+            each_row[p] = format_value(round(each_map[p], 2))
         # Collect rows for Type table
         rows = [income_row, expense_row, disposable_row, each_row]
         
@@ -252,22 +269,20 @@ class ExpensePlan:
             needed_c = split_disposable_c + abs(payee_c)  # Not used in A/B split
             needed_d = split_disposable_d + abs(payee_d)  # Not used in A/B split
             
-            # Store for payment calculations
+
+            # Create row dictionary dynamically based on pay period
             payee_needs[payee] = {'A': needed_a, 'B': needed_b, 'C': needed_c, 'D': needed_d}
             
-            # Create row dictionary
-            payee_row = {
-                'Payee': payee,
-                'Total': format_value(payee_data['total']),
-                'A Expenses': format_value(payee_a),
-                'B Expenses': format_value(payee_b),
-                'C Expenses': format_value(payee_c),
-                'D Expenses': format_value(payee_d),
-                'A Needs': format_value(round(needed_a, 2)),
-                'B Needs': format_value(round(needed_b, 2)),
-                'C Needs': format_value(round(needed_c, 2)),
-                'D Needs': format_value(round(needed_d, 2))
-            }
+            
+            payee_row = {'Payee': payee, 'Total': format_value(payee_data['total'])}
+
+            expenses_map = {'A': payee_a, 'B': payee_b, 'C': payee_c, 'D': payee_d}
+            needs_map = {'A': needed_a, 'B': needed_b, 'C': needed_c, 'D': needed_d}
+
+            for p in payperiods:
+                payee_row[f'{p} Expenses'] = format_value(expenses_map[p])
+                payee_row[f'{p} Needs'] = format_value(round(needs_map[p], 2))
+
             payee_rows.append(payee_row)
         
         # Print the Payee table
@@ -276,7 +291,6 @@ class ExpensePlan:
         
         # Determine payments based on greatest need for each pay period
 
-        payperiods = ['A', 'B'] if self.payperiod_selector == 'Biweekly' else ['A', 'B', 'C', 'D']
         print("\nPayment Assignments:")
         for period in payperiods:
             # Find payee with greatest need (highest positive Needed value)

@@ -73,11 +73,13 @@ class Engine:
                     save_file = input("Enter save name: ")
                     pickle_save(self, "saves/"+save_file+".pkl")
                 case "7":
+                    prompt_save(self, self.filename, "current session")
                     print(get_file_names("saves/"))
                     save_file = input("Enter file name: ")
                     self = pickle_load("saves/"+save_file+".pkl")
                     self: Engine = self
                 case "q":
+                    prompt_save(self, self.filename, "current session")
                     break
 
     def add_people(self):

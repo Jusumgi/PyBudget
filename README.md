@@ -9,7 +9,6 @@ Information entered into this program is at the discretion of the user(s) and th
 CURRENT ISSUES/PLANS
 
 - BUG: When a person doesn't have any expenses of their own, they do not seem to appear in Expense Plan print-out
-- FEATURE: Offer flexibility to Pay Periods - ability to select between Weekly(ABCD), Biweekly (A/B), or Monthly formatting when printing a plan out.
 - FEATURE: "Save Changes?" prompts
 - FEATURE: When expense plan is created, prompt to select each person who should be included in the expense plan.
 - FEATURE: Ability to create more than one expense plan, and be able to swap between them.

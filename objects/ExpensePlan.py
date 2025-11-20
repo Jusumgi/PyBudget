@@ -13,7 +13,7 @@ class ExpensePlan:
         self.payperiod_selector: str = 'Biweekly'
         self.people:list[Person] = people
         self.cashflows: list[dict] = self.accumulate_cashflows()
-
+    
     def change_currency_symbol(self):
         """ Changes the currency symbol for the person. """
         new_symbol = currency_symbol_selection()
@@ -37,7 +37,7 @@ class ExpensePlan:
                 case _:
                     print('Please input "1" or "2" to select pay period.')
 
-    def find_pay_period(self, day): #may not be needed in this object, but here for now
+    def find_pay_period(self, day): 
         """ Determines the pay period code based on the day and expense plan's pay period selector. """
         if day == "I":
             return "I"
@@ -56,66 +56,6 @@ class ExpensePlan:
                     return "B"
                 else:
                     return "A" 
-    def add_people(self):
-        """ Adds a person from file to the expense plan by name. """
-        while True:
-            person_add: str = input("Enter a name to be added: ")
-            if person_add:
-                self.people.append(Person(person_add))
-                break
-            else:
-                print("Cannot enter a blank name.")
-
-    def remove_people(self):
-        """ Removes a person from program by name. """
-        name = input('Enter the name of cashflow to be removed: ')
-        found = False
-        for index, item in enumerate(self.people):
-            each = item.__dict__ # Convert each Person object to dict
-            if each['name'] == name:
-                found = True
-                print(each)
-                print("Are you sure you want to remove? (y)es or (n)o")
-                while True:
-                    confirmation = getchit()
-                    if confirmation == 'y':
-                        self.cashflows.pop(index)
-                        print('Person removed')
-                        input("Press any key to continue")
-                        break
-                    elif confirmation == 'n' :
-                        print('Person not removed.')
-                        input("Press any key to continue")
-                        break
-                    else:
-                        print("Please press y or n")
-                break        
-        if not found:
-            print(f"Person with name '{name}' not found.")
-            input("Press any key to continue")
-
-    def people_management(self, people: list):
-        """ Manages adding and removing people from the expense plan. """
-        while True:
-            clear_screen()
-            print("Current People")
-            for each in people:
-                each = each.__dict__
-                print(each['name'])
-            print("(a)dd or (r)emove people?")
-            print("Press b to go back")
-            peepmgmt = getchit()
-            match(peepmgmt):
-                case 'a':
-                    self.add_people()  
-                case 'r':
-                    if len(self.people) == 0:
-                        print("No people to remove.")
-                        input("Press any key to continue.")
-                    else:
-                        self.remove_people()
-                case 'b':
-                    break
 
     def print_cashflow(self):
         """ Prints the cashflows in a tabulated format with color coding for income and expenses. """
@@ -131,7 +71,7 @@ class ExpensePlan:
             printed_cashflow.append(each)
         print(tabulate(printed_cashflow, headers='keys', disable_numparse=True, tablefmt='double_grid'))
 
-    def print_expenseplan(self):
+    def print_expenseplan(self): # This Function was mostly generated and will take some time to refactor properly
         """ Prints a summary of the expense plan including totals by type and payee assignments. """
         clear_screen()
         buffer:list[Cashflow] = copy.deepcopy(self.cashflows)
@@ -167,6 +107,8 @@ class ExpensePlan:
         # Round totals to 2 decimal places
         for key in totals:
             totals[key] = round(totals[key], 2)
+
+        # Deconstruct totals for easier, more readable access
         income = totals.get('Income', 0)
         expense = totals.get('Expense', 0)
         monthly = totals.get('M', 0)

@@ -47,7 +47,6 @@ class Engine:
                 case "3":
                     if self.current_expense_plan is None:
                         self.current_expense_plan = self.create_expense_plan()
-                        self.current_expense_plan.people = self.people
                         self.current_expense_plan.accumulate_cashflows()
                     else:
                         self.current_expense_plan = self.expense_plan_management()
@@ -64,7 +63,6 @@ class Engine:
                 case "5":
                     if self.current_expense_plan is None:
                         self.current_expense_plan = self.create_expense_plan()
-                        self.current_expense_plan.people = self.people
                         self.current_expense_plan.accumulate_cashflows()
                     else:
                         self.current_expense_plan.print_expenseplan()
@@ -182,13 +180,38 @@ class Engine:
                         self.remove_people()
                 case 'b':
                     break
+    def select_people(self):
+        """ Selects people to be included in the expense plan. """
+        selected_people = []
+        for each in self.people:
+            each = each.__dict__
+            print(each['name'])
+
+        selection = input("Add all people to expense plan? (y)es or (n)o:")
+        if selection.lower() == 'y':
+            return self.people
+        print("Select people to include in the expense plan (type 'done' when finished):")
+        while True:
+            name = input("Enter person's name: ")
+            for index, item in enumerate(self.people):
+                each = item.__dict__ # Convert each Person object to dict
+                if each['name'] == name:
+                    print(each)
+                    selected_people.append(self.people[index])
+                    print(f'{each['name']} added')
+                    input("Press any key to continue")
+                    break   
+            if name.lower() == 'done':
+                break
+        return selected_people
+    
     def create_expense_plan(self):
         print("No expense plan loaded. Would you like to create one now? (y)es or (n)o")
         while True:
             confirmation = getchit()
             if confirmation == 'y':
                 plan_name = input("Enter a name for the new expense plan: ")
-                self.current_expense_plan = ExpensePlan(plan_name, self.people)
+                self.current_expense_plan = ExpensePlan(plan_name, self.select_people())
                 print(f"Expense Plan '{plan_name}' created and loaded.")
                 input("Press any key to continue.")
                 return self.current_expense_plan

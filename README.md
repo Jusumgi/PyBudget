@@ -9,6 +9,5 @@ Information entered into this program is at the discretion of the user(s) and th
 CURRENT ISSUES/PLANS
 
 - BUG: When a person doesn't have any expenses of their own, they do not seem to appear in Expense Plan print-out
-- FEATURE: When expense plan is created, prompt to select each person who should be included in the expense plan.
-- FEATURE: Ability to create more than one expense plan, and be able to swap between them.
+- FEATURE: Ability to create more than one expense plan, and be able to swap between them, and remove them.
 - FEATURE: Ability to edit a cashflow object

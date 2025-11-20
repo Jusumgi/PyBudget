@@ -182,24 +182,21 @@ class Engine:
                     break
     def select_people(self):
         """ Selects people to be included in the expense plan. """
+        selection = input("Add all people to expense plan? (y)es or (n)o:")
+        if selection.lower() == 'y':
+            return self.people
         selected_people = []
         for each in self.people:
             each = each.__dict__
             print(each['name'])
-
-        selection = input("Add all people to expense plan? (y)es or (n)o:")
-        if selection.lower() == 'y':
-            return self.people
         print("Select people to include in the expense plan (type 'done' when finished):")
         while True:
             name = input("Enter person's name: ")
             for index, item in enumerate(self.people):
                 each = item.__dict__ # Convert each Person object to dict
                 if each['name'] == name:
-                    print(each)
                     selected_people.append(self.people[index])
                     print(f'{each['name']} added')
-                    input("Press any key to continue")
                     break   
             if name.lower() == 'done':
                 break
@@ -221,7 +218,28 @@ class Engine:
                 break
             else:
                 print("Please press y or n")
-    
+                
+    def delete_expense_plan(self):
+        """ Deletes the current expense plan. """
+        if self.current_expense_plan is None:
+            print("No expense plan loaded. Cannot delete.")
+            input("Press any key to continue.")
+            return
+        print("Are you sure you want to delete the current expense plan? (y)es or (n)o")
+        while True:
+            confirmation = getchit()
+            if confirmation == 'y':
+                print(f"Expense Plan '{self.current_expense_plan.plan_name}' deleted.")
+                self.current_expense_plan = None
+                input("Press any key to continue.")
+                return
+            elif confirmation == 'n' :
+                print('Expense Plan not deleted.')
+                input("Press any key to continue.")
+                return
+            else:
+                print("Please press y or n")
+
     def expense_plan_management(self):
         """ Manages the current expense plan. """
         if self.current_expense_plan is None:
@@ -234,6 +252,9 @@ class Engine:
             print(f"(1) View Expense Plan")
             print(f"(2) Set Currency Symbol: {self.current_expense_plan.currency_symbol}")
             print(f"(3) Set Pay Period: {self.current_expense_plan.payperiod_selector}")
+            print("==========================")
+            print(f"(4) Change Expense Plan")
+            print(f"(5) Delete Expense Plan")
             print("(b) Back to Main Menu")
             choice = getchit()
             match(choice):
@@ -244,5 +265,22 @@ class Engine:
                     self.current_expense_plan.change_currency_symbol()
                 case "3":
                     self.current_expense_plan.set_pay_period()
+                case "4":
+                    pass
+                case "5":
+                    print("Are you sure you want to delete the current expense plan? (y)es or (n)o")
+                    while True:
+                        confirmation = getchit()
+                        if confirmation == 'y':
+                            print(f"Expense Plan '{self.current_expense_plan.plan_name}' deleted.")
+                            self.current_expense_plan = None
+                            input("Press any key to continue.")
+                            return None
+                        elif confirmation == 'n' :
+                            print('Expense Plan not deleted.')
+                            input("Press any key to continue.")
+                            break
+                        else:
+                            print("Please press y or n")
                 case "b":
                     return self.current_expense_plan

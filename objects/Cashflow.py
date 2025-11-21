@@ -24,7 +24,6 @@ def pay_date_select(flow_type, category):
                 day = input('Enter day of month due (1-31): ')
                 if (1 <= int(day) <= 31):
                     return int(day)
-                    # return find_pay_period(int(day))
                 else:
                     print("Please enter a number between 1 & 31")
             except ValueError:

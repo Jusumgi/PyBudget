@@ -46,8 +46,8 @@ class Engine:
                                 person.cashflow_management()
                 case "3":
                     if self.current_expense_plan is None:
+                        print("No expense plan loaded.")
                         self.current_expense_plan = self.create_expense_plan()
-                        self.current_expense_plan.accumulate_cashflows()
                     else:
                         self.current_expense_plan = self.expense_plan_management()
                 case "4":
@@ -62,8 +62,8 @@ class Engine:
                     getchit()
                 case "5":
                     if self.current_expense_plan is None:
+                        print("No expense plan loaded.")
                         self.current_expense_plan = self.create_expense_plan()
-                        self.current_expense_plan.accumulate_cashflows()
                     else:
                         self.current_expense_plan.print_expenseplan()
                         getchit()
@@ -202,22 +202,45 @@ class Engine:
                 break
         return selected_people
     
-    def create_expense_plan(self):
-        print("No expense plan loaded. Would you like to create one now? (y)es or (n)o")
+    def create_expense_plan(self, current_expense_plan=None):
+        print("Would you like to create one now? (y)es or (n)o")
         while True:
             confirmation = getchit()
             if confirmation == 'y':
                 plan_name = input("Enter a name for the new expense plan: ")
                 self.current_expense_plan = ExpensePlan(plan_name, self.select_people())
+                self.current_expense_plan.accumulate_cashflows()
+                self.expense_plans.append(self.current_expense_plan)
                 print(f"Expense Plan '{plan_name}' created and loaded.")
                 input("Press any key to continue.")
                 return self.current_expense_plan
             elif confirmation == 'n':
                 print("Returning to main menu.")
                 input("Press any key to continue.")
-                break
+                return current_expense_plan
             else:
                 print("Please press y or n")
+    def select_expense_plan(self):
+        """ Selects an existing expense plan to be the current one. """
+        if len(self.expense_plans) == 0:
+            print("No expense plans available. Please create one first.")
+            input("Press any key to continue.")
+            return None
+        print("Available Expense Plans:")
+        for index, plan in enumerate(self.expense_plans):
+            print(f"({index + 1}) {plan.plan_name}")
+        while True:
+            try:
+                selection = int(input("Enter the number of the expense plan to load: "))
+                if 1 <= selection <= len(self.expense_plans):
+                    self.current_expense_plan = self.expense_plans[selection - 1]
+                    print(f"Expense Plan '{self.current_expense_plan.plan_name}' loaded.")
+                    input("Press any key to continue.")
+                    return self.current_expense_plan
+                else:
+                    print(f"Please enter a number between 1 and {len(self.expense_plans)}.")
+            except ValueError:
+                print("Invalid input. Please enter a valid number.")
 
     def delete_expense_plan(self):
         """ Deletes the current expense plan. """
@@ -248,13 +271,14 @@ class Engine:
             return
         while True:
             clear_screen()
-            print(f"Expense Plan: {self.current_expense_plan.plan_name}")
+            print(f"Expense Plan: {self.current_expense_plan.plan_name if self.current_expense_plan else 'None'}")
             print(f"(1) View Expense Plan")
             print(f"(2) Set Currency Symbol: {self.current_expense_plan.currency_symbol}")
             print(f"(3) Set Pay Period: {self.current_expense_plan.payperiod_selector}")
             print("==========================")
-            print(f"(4) Change Expense Plan")
-            print(f"(5) Delete Expense Plan")
+            print(f"(4) Create New Expense Plan")
+            print(f"(5) Change Expense Plan")
+            print(f"(6) Delete Expense Plan")
             print("(b) Back to Main Menu")
             choice = getchit()
             match(choice):
@@ -266,8 +290,10 @@ class Engine:
                 case "3":
                     self.current_expense_plan.set_pay_period()
                 case "4":
-                    pass
+                    self.current_expense_plan = self.create_expense_plan(self.current_expense_plan)
                 case "5":
+                    self.select_expense_plan()
+                case "6":
                     print("Are you sure you want to delete the current expense plan? (y)es or (n)o")
                     while True:
                         confirmation = getchit()

@@ -6,8 +6,9 @@ This is a tool designed to help organize money flow.
 
 Information entered into this program is at the discretion of the user(s) and the insights provided through calculations are not to be considered financial advice.
 
-CURRENT ISSUES/PLANS
+CURRENT ISSUES/PLANS (using this as a board for what to work on next)
 
 - BUG: When a person doesn't have any expenses of their own, they do not seem to appear in Expense Plan print-out
 - FEATURE: Need to be able to remove expense plans from Expense Plans list
-- FEATURE: Ability to edit a cashflow object
+- FEATURE: Ability to edit a cashflow object (Currently, you have to delete cashflows and add them back in)
+- FEATURE: Printable Expense Plans

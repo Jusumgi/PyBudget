@@ -3,7 +3,7 @@ from tools import getchit
 
 class Cashflow:
     """ Represents a cashflow entry in an expense plan. """
-    def __init__(self, expense_plan):
+    def __init__(self, person_name):
         self.id = str(uuid.uuid4())[:4]
         self.flow_type = determine_cashflow_type()
         if self.flow_type == 'Cancel':
@@ -12,38 +12,7 @@ class Cashflow:
         self.category = determine_category(self.flow_type)
         self.description = input('Enter description: ')
         self.payperiod = pay_date_select(self.flow_type, self.category)
-        self.payee = payee_select(expense_plan)
-
-def find_pay_period(day, expense_plan):
-    """ Determines the pay period code based on the day and expense plan's pay period selector. """
-    match expense_plan.payperiod_selector:
-        case "Monthly":
-            return "M"
-        case "Weekly":
-            if 1 <= day <= 7:
-                return "D"
-            elif 8 <= day <= 14:    
-                return "C"
-            elif 15 <= day <= 21:
-                return "B"
-            else:
-                return "A"
-        case "Biweekly":
-            if 1 <= day <= 15 :
-                return "B"
-            else:
-                return "A" 
-
-def payee_select(expense_plan):
-    """ Prompts user to select a payee from existing people in the expense plan. """
-    for each in expense_plan.people:
-        print(each)
-    while True:
-        payee: str = input('Select a Payee: ')
-        if payee in expense_plan.people:
-            return payee
-        else:
-            print("Please enter a name from existing people.")
+        self.payee = person_name
 
 def pay_date_select(flow_type, category):
     """ Prompts user to select a pay date based on flow type and category. """
@@ -54,7 +23,7 @@ def pay_date_select(flow_type, category):
                     return "M"
                 day = input('Enter day of month due (1-31): ')
                 if (1 <= int(day) <= 31):
-                    return find_pay_period(int(day))
+                    return int(day)
                 else:
                     print("Please enter a number between 1 & 31")
             except ValueError:
